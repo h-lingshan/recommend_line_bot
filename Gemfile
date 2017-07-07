@@ -30,7 +30,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem 'line-bot-api'
+gem 'dotenv-rails'
+gem 'faraday'
+gem 'faraday_middleware'
 group :development, :test do
   gem 'sqlite3'
 end
@@ -41,7 +43,6 @@ end
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-  gem 'line-bot'
 end
 
 group :development do
