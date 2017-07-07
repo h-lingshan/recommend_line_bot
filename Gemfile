@@ -33,7 +33,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'dotenv-rails'
 gem 'faraday'
 gem 'faraday_middleware'
-gem 'line-bot-api'
+#gem 'line-bot-api'
 group :development, :test do
   gem 'sqlite3'
 end
