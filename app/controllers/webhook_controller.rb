@@ -6,8 +6,8 @@
 
  def client
   client = Line::Bot::Client.new { |config|
-  config.channel_secret = 'あなたのチャンネルシークレット'
-  config.channel_token = 'あなたのチャンネルトークン'
+  config.channel_secret = ENV["CHANNEL_SECRET"]
+  config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
   }
  end
 
