@@ -1,5 +1,7 @@
  class WebhookController < ApplicationController
-require 'line/bot'
+ #Lineからのcallbackか認証
+  protect_from_forgery :except => [:callback]
+ require 'line/bot'
   protect_from_forgery :except => [:callback]
 
   def callback
@@ -34,4 +36,5 @@ require 'line/bot'
       config.channel_secret = ENV["CHANNEL_SECRET"]
       config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
     }
+  end
   end
