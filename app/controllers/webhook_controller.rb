@@ -1,6 +1,8 @@
+ require 'line/bot'
+ 
  class WebhookController < ApplicationController
   protect_from_forgery :except => [:callback]
-  require 'line/bot'
+  
 
   def callback
     body = request.body.read
@@ -25,7 +27,7 @@
         end
       end
     }
-    head :ok
+    render status: 200, json: { message: 'OK' }
   end
 
   private
@@ -35,9 +37,8 @@
       config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
     }
   end
-end
 
-module Line
+  module Line
   module Bot
     class HTTPClient
       def http(uri)
@@ -46,8 +47,11 @@ module Line
         if uri.scheme == "https"
           http.use_ssl = true
         end
+
         http
       end
     end
   end
 end
+end
+
