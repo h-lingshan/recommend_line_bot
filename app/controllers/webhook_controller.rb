@@ -37,8 +37,9 @@
       config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
     }
   end
+end
 
-  module Line
+module Line
   module Bot
     class HTTPClient
       def http(uri)
@@ -52,6 +53,5 @@
       end
     end
   end
-end
 end
 
