@@ -53,5 +53,5 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
-  post '/callback' => 'bot#callback'
+  post '/callback' => 'webhook#callback'
 end
