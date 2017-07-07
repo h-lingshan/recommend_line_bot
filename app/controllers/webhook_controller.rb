@@ -4,43 +4,62 @@
   protect_from_forgery :except => [:callback]
   
 
-  def callback
-    # body = request.body.read
+#   def callback
+#     body = request.body.read
 
-    # signature = request.env['HTTP_X_LINE_SIGNATURE']
-    # unless client.validate_signature(body, signature)
-    #   error 400 do 'Bad Request' end
-    # end
+#     signature = request.env['HTTP_X_LINE_SIGNATURE']
+#     unless client.validate_signature(body, signature)
+#       error 400 do 'Bad Request' end
+#     end
+
+#     events = client.parse_events_from(body)
+#     events.each { |event|
+#       case event
+#       when Line::Bot::Event::Message
+#         case event.type
+#         when Line::Bot::Event::MessageType::Text
+#           message = {
+#             type: 'text',
+#             text: event.message['text']
+#           }
+#           response = client.reply_message(event['replyToken'], message)
+#           p response
+#         end
+#       end
+#     }
+#     render status: 200, json: { message: 'OK' }
+#   end
+
+#   private
+#   def client
+#     @client ||= Line::Bot::Client.new { |config|
+#       config.channel_secret = ENV["CHANNEL_SECRET"]
+#       config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
+#     }
+#   end
+
+CHANNEL_SECRET = ENV['CHANNEL_SECRET']
+  OUTBOUND_PROXY = ENV['OUTBOUND_PROXY']
+  CHANNEL_ACCESS_TOKEN = ENV['CHANNEL_ACCESS_TOKEN']
+
+  def callback
     unless is_validate_signature
       render :nothing => true, status: 470
     end
 
-    # events = client.parse_events_from(body)
-    # events.each { |event|
-    #   case event
-    #   when Line::Bot::Event::Message
-    #     case event.type
-    #     when Line::Bot::Event::MessageType::Text
-    #       message = {
-    #         type: 'text',
-    #         text: event.message['text']
-    #       }
-    #       response = client.reply_message(event['replyToken'], message)
-    #       p response
-    #     end
-    #   end
-    # }
-    events = client.parse_events_from(body)
     event = params["events"][0]
     event_type = event["type"]
-    replayToken = event["replayToken"]
+    replyToken = event["replyToken"]
+
     case event_type
     when "message"
       input_text = event["message"]["text"]
       output_text = input_text
     end
 
-    res =client.replay(replayToken, output_text)
+    client = LineClient.new(CHANNEL_ACCESS_TOKEN, OUTBOUND_PROXY)
+    res = client.reply(replyToken, output_text)
+
     if res.status == 200
       logger.info({success: res})
     else
@@ -48,18 +67,8 @@
     end
 
     render :nothing => true, status: :ok
-
   end
-
   private
-  def client
-    @client ||= Line::Bot::Client.new { |config|
-      config.channel_secret = ENV["CHANNEL_SECRET"]
-      config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
-    }
-  end
-
-   private
   # verify access from LINE
   def is_validate_signature
     signature = request.headers["X-LINE-Signature"]
