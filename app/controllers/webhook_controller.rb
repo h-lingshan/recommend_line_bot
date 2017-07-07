@@ -1,8 +1,6 @@
  class WebhookController < ApplicationController
- #Lineからのcallbackか認証
   protect_from_forgery :except => [:callback]
- require 'line/bot'
-  protect_from_forgery :except => [:callback]
+  require 'line/bot'
 
   def callback
     body = request.body.read
@@ -37,4 +35,19 @@
       config.channel_token = ENV["CHANNEL_ACCESS_TOKEN"]
     }
   end
+end
+
+module Line
+  module Bot
+    class HTTPClient
+      def http(uri)
+        proxy = URI(ENV["FIXIE_URL"])
+        http = Net::HTTP.new(uri.host, uri.port, proxy.host, proxy.port, proxy.user, proxy.password)
+        if uri.scheme == "https"
+          http.use_ssl = true
+        end
+        http
+      end
+    end
   end
+end
