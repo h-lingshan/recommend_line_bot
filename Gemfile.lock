@@ -71,7 +71,6 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.6)
-    line-bot-api (1.2.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.6)
@@ -167,7 +166,6 @@ DEPENDENCIES
   faraday_middleware
   jbuilder (~> 2.0)
   jquery-rails
-  line-bot-api
   pg
   rails (= 4.2.5)
   rails_12factor
