@@ -1,0 +1,26 @@
+version: '2'
+services:
+  test_db:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: Levinas-1906
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Levinas-1906
+      MYSQL_DATABASE: line_bot
+    expose:
+      - "3307"
+    volumes:
+      - ./mysql/test:/var/lib/mysql
+      - ./mysql/conf:/etc/mysql/conf.d
+  web:
+    build: .
+    command: bundle exec rails s -p 3003 -b '0.0.0.0'
+    volumes:
+      - .:/workspace
+    ports:
+    - "3003:3003"
+    tty: true
+    stdin_open: true
+    depends_on:
+      - test_db
