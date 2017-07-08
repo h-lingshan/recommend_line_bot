@@ -39,17 +39,6 @@ def callback
                   type: 'text',
                   text: input_text
                   }
-
-          #画像が送られた場合、適当な画像を送り返す
-          #画像を返すには、画像が保存されたURLを指定する。
-          #なお、おうむ返しするには、１度AWSなど外部に保存する必要がある。ここでは割愛する
-          when Line::Bot::Event::MessageType::Image
-            image_url = "https://XXXXXXXXXX/XXX.jpg"  #httpsであること
-              message = {
-                  type: "image",
-                  originalContentUrl: image_url,
-                  previewImageUrl: image_url
-                  }
          end #event.type
          #メッセージを返す
          client.reply_message(event['replyToken'],message)
