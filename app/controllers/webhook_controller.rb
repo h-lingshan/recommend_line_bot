@@ -55,7 +55,7 @@ def callback
          client.reply_message(event['replyToken'],message)
     end #event
  } #events.each
-head :ok
+ render :nothing => true, status: :ok
 end  #def
 
 
