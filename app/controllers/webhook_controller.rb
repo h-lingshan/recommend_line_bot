@@ -55,7 +55,7 @@ def callback
          client.reply_message(event['replyToken'],message)
     end #event
  } #events.each
-
+head :ok
 end  #def
 
 
