@@ -21,11 +21,11 @@ class WebhookController < ApplicationController
             text: event.message['text']
           }
           response = client.reply_message(event['replyToken'], message)
-          p response
+          #p response
         end
       end
     }
-    head :ok
+    head :ok, content_type: "text/html"
   end
 
   private
