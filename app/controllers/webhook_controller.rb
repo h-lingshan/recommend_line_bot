@@ -1,4 +1,4 @@
-class LinebotController < ApplicationController
+class WebhookController < ApplicationController
   require 'line/bot'
   protect_from_forgery :except => [:callback]
 
