@@ -44,13 +44,13 @@ class WebhookController < ApplicationController
              actions: [
                {
                  type: "message",
-                 label: "Yes",
-                 text: "yes"
+                 label: data_hash["question"]["choice"][0]["label"],
+                 text: data_hash["question"]["choice"][0]["label"]
                },
                {
                  type: "message",
-                 label: "No",
-                 text: "no"
+                 label: data_hash["question"]["choice"][1]["label"],
+                 text: data_hash["question"]["choice"][1]["label"]
                }
              ]
            }
