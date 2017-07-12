@@ -36,24 +36,8 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           if @data_hash["context_name"].include?(event.message['text'])
           message = {
-           type: "template",
-           altText: "this is a confirm template",
-           template: {
-             type: "confirm",
-             text: "Are you sure?",
-             actions: [
-                        {
-                          type: "message",
-                          label: "Yes",
-                          text: "yes"
-                        },
-                        {
-                          type: "message",
-                          label: "No",
-                          text: "no"
-                        }
-                      ]
-           }
+            type: 'text',
+            text: event.message['text']
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
@@ -61,8 +45,8 @@ class WebhookController < ApplicationController
           tf = Tempfile.open("content")
           tf.write(response.body)
         end
-      end
-    }
+    end
+  }
     render status: 200, json: { message: 'OK' }
   end
 
