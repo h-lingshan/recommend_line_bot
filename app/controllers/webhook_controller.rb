@@ -36,7 +36,6 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          if event.message['text'] == @data_hash["question"]["label"]
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -57,12 +56,6 @@ class WebhookController < ApplicationController
              ]
            }
           }
-          else 
-            message = {
-              type: "text",
-              text: "友達登録ありがとうございます！"
-            }
-          end
           client.reply_message(event['replyToken'], message)
         end
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
