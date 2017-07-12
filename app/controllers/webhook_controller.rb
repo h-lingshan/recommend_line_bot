@@ -31,7 +31,7 @@ class WebhookController < ApplicationController
 
     events = client.parse_events_from(body)
     events.each { |event|
-      if event.message["text"]=="映画サジェスト"
+      if event.message["text"]=="123"
       case event
       when Line::Bot::Event::Message
         case event.type
