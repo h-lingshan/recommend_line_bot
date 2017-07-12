@@ -36,10 +36,26 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-        
+          if @data_hash["context_name"].include?(event.message['text'])
           message = {
-            type: 'text',
-            text: event.message['text']
+           type: "template",
+           altText: "this is a confirm template",
+           template: {
+             type: "confirm",
+             text: "Are you sure?",
+             actions: [
+               {
+                 type: "message",
+                 label: "Yes",
+                 text: "yes"
+               },
+               {
+                 type: "message",
+                 label: "No",
+                 text: "no"
+               }
+             ]
+           }
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
