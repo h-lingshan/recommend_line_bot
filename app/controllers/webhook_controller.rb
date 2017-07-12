@@ -35,37 +35,38 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          if event.message["text"].to_s == "映画サジェスト"　then
-          message = {
-           type: "template",
-           altText: data_hash["question"]["label"],
-           template: {
-             type: "confirm",
-             text: data_hash["question"]["body"]["content"],
-             actions: [
-               {
-                 type: "message",
-                 label: data_hash["question"]["choice"][0]["label"],
-                 text: data_hash["question"]["choice"][0]["label"]
-               },
-               {
-                 type: "message",
-                 label: data_hash["question"]["choice"][1]["label"],
-                 text: data_hash["question"]["choice"][1]["label"]
-               }
-             ]
-           }
-          }
-          elsif event.message["text"].to_s == "はい" then
-             message = {
-                type: "text",
-                text: data_hash["question"]["choice"][0]["finish"]["content"]
+          case  event.message["text"].to_s
+          when "映画サジェスト"
+            message = {
+              type: "template",
+              altText: data_hash["question"]["label"],
+              template: {
+                type: "confirm",
+                text: data_hash["question"]["body"]["content"],
+              actions: [
+                {
+                  type: "message",
+                  label: data_hash["question"]["choice"][0]["label"],
+                  text: data_hash["question"]["choice"][0]["label"]
+                },
+                {
+                  type: "message",
+                  label: data_hash["question"]["choice"][1]["label"],
+                  text: data_hash["question"]["choice"][1]["label"]
+                }
+              ]
              }
-          else 
-             message = {
+          　}
+          when "はい" 
+            message = {
+              type: "text",
+              text: data_hash["question"]["choice"][0]["finish"]["content"]
+            }
+          when "いいえ" 
+            message = {
                 type: "text",
                 text: event.message["text"]
-             }
+            }
           end
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
