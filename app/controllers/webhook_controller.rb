@@ -18,7 +18,9 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    get_sample
+    file = File.read("db/sample.json")
+    data_hash = JSON.parse(file)
+    @data_hash = data_hash
 
     body = request.body.read
 
