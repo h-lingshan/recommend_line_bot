@@ -35,17 +35,17 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-      when Line::Bot::Event::MessageType::Text
+        when Line::Bot::Event::MessageType::Text
           message = {
            type: "template",
-           altText: @data_hash["question"]["body"]["label"],
+           altText: "this is a confirm template",
            template: {
              type: "confirm",
-             text: @data_hash["question"]["body"]["content"],
+             text: "Are you sure?",
              actions: [
                {
                  type: "message",
-                 label: "yes",
+                 label: "Yes",
                  text: "yes"
                },
                {
@@ -57,7 +57,6 @@ class WebhookController < ApplicationController
            }
           }
           client.reply_message(event['replyToken'], message)
-        end
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])
           tf = Tempfile.open("content")
