@@ -54,5 +54,6 @@ Rails.application.routes.draw do
   #     resources :products
   #   end
   post '/callback' => 'webhook#callback'
+  get '/' => 'webhook#get_sample'
   
 end
