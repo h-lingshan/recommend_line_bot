@@ -31,7 +31,7 @@ class WebhookController < ApplicationController
 
     events = client.parse_events_from(body)
     events.each { |event|
-      if event.message["text"]==data_hash["context_name"]
+      if event.message["text"]=="映画サジェスト"
       case event
       when Line::Bot::Event::Message
         case event.type
@@ -55,6 +55,18 @@ class WebhookController < ApplicationController
                }
              ]
            }
+          }        
+          client.reply_message(event['replyToken'], message)
+      end
+      end
+      if event.message["text"]=="はい"
+      case event
+      when Line::Bot::Event::Message
+        case event.type
+        when Line::Bot::Event::MessageType::Text
+          message = {
+           type: "text",
+           text: data_hash["question"]["choice"][0]["finish"]["content"]
           }        
           client.reply_message(event['replyToken'], message)
       end
