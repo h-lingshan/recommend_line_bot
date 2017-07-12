@@ -33,23 +33,34 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-        when Line::Bot::Event::Follow
-        receive_follow(message_target)
         when Line::Bot::Event::MessageType::Text
-          if @data_hash["question"]["label"].include?(event.message['text'])
-            message = {
-              type: "text",
-              text: "友達登録ありがとうございます！"
-            }
-        #  end
-         
-          response = client.reply_message(event['replyToken'], message)
-          end
+          if @data_hash["context_name"].include?(event.message['text'])
+          message = {
+           type: "template",
+           altText: "this is a confirm template",
+           template: {
+             type: "confirm",
+             text: "Are you sure?",
+             actions: [
+                        {
+                          type: "message",
+                          label: "Yes",
+                          text: "yes"
+                        },
+                        {
+                          type: "message",
+                          label: "No",
+                          text: "no"
+                        }
+                      ]
+           }
+          }
+          client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])
           tf = Tempfile.open("content")
           tf.write(response.body)
-        end   
+        end
       end
     }
     render status: 200, json: { message: 'OK' }
