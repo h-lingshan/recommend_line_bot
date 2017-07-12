@@ -20,7 +20,6 @@ class WebhookController < ApplicationController
   def callback
     file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
-    @data_hash = data_hash
 
     body = request.body.read
 
@@ -38,10 +37,10 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = {
            type: "template",
-           altText: "this is a confirm template",
+           altText: data_hash["question"]["label"],
            template: {
              type: "confirm",
-             text: "Are you sure?",
+             text: data_hash["question"]["body"]["content"],
              actions: [
                {
                  type: "message",
