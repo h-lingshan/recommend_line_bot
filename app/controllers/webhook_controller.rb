@@ -34,7 +34,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          if @data_hash["context_name"].include?(event.message['text'])
+        
           message = {
             type: 'text',
             text: event.message['text']
