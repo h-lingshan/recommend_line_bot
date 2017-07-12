@@ -31,6 +31,7 @@ class WebhookController < ApplicationController
 
     events = client.parse_events_from(body)
     events.each { |event|
+      if event.message["text"]=="123"
       case event
       when Line::Bot::Event::Message
         case event.type
@@ -61,7 +62,8 @@ class WebhookController < ApplicationController
           tf = Tempfile.open("content")
           tf.write(response.body)
         end
-    end
+      end
+      end
   }
     render status: 200, json: { message: 'OK' }
   end
