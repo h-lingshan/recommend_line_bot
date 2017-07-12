@@ -31,6 +31,7 @@ class WebhookController < ApplicationController
         receive_follow(message_target)
         when Line::Bot::Event::MessageType::Text
           if event.message['text'].include?(data_hash["context_name"])
+            
             message = {
               type: 'template',
               altText: "this is a confirm template",
