@@ -35,7 +35,12 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-        when Line::Bot::Event::MessageType::Text
+      when Line::Bot::Event::MessageType::Text
+          message = {
+            type: "text"
+            text: @data_hash["context_name"]
+          }
+          client.reply_message(event['replyToken'], message)
           message = {
            type: "template",
            altText: "this is a confirm template",
