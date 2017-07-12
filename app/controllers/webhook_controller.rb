@@ -31,7 +31,7 @@ class WebhookController < ApplicationController
 
     events = client.parse_events_from(body)
     events.each { |event|
-      if data_hash["context_name"].include?(event.message["text"])
+      if event.message["text"]==data_hash["context_name"]
       case event
       when Line::Bot::Event::Message
         case event.type
@@ -56,14 +56,22 @@ class WebhookController < ApplicationController
              ]
            }
           }        
-          client.reply_message(event['replyToken'], message)
-        when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
-          response = client.get_message_content(event.message['id'])
-          tf = Tempfile.open("content")
-          tf.write(response.body)
-        end
+          
       end
       end
+      if event.message["text"]=="はい"
+      case event
+      when Line::Bot::Event::Message
+        case event.type
+        when Line::Bot::Event::MessageType::Text
+          message = {
+           type: "text",
+           text: data_hash["question"]["choice"][0]["finish"]["content"]
+          }        
+          
+      end
+      end
+      client.reply_message(event['replyToken'], message)
   }
     render status: 200, json: { message: 'OK' }
   end
