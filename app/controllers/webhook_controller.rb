@@ -35,7 +35,7 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-        when Line::Bot::Event::MessageType::Text
+      when Line::Bot::Event::MessageType::Text
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -45,13 +45,13 @@ class WebhookController < ApplicationController
              actions: [
                {
                  type: "message",
-                 label: "はい",
-                 text: "はい"
+                 label: "yes",
+                 text: "yes"
                },
                {
                  type: "message",
-                 label: "いいえ",
-                 text: "いいえ"
+                 label: "No",
+                 text: "no"
                }
              ]
            }
