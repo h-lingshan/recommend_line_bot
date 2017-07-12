@@ -30,10 +30,12 @@ class WebhookController < ApplicationController
     end
 
     events = client.parse_events_from(body)
-    message = events.event[0]["message"]
-    replyToken = events.event[0]["replyToken"]
-    if message == "123"
-       messageData  = {
+    events.each { |event|
+      case event
+      when Line::Bot::Event::Message
+        case event.type
+        when Line::Bot::Event::MessageType::Text
+          message = {
            type: "template",
            altText: data_hash["question"]["label"],
            template: {
@@ -53,41 +55,14 @@ class WebhookController < ApplicationController
              ]
            }
           }        
-          client.reply_message(event['replyToken'], messageData)
+          client.reply_message(event['replyToken'], message)
+        when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
+          response = client.get_message_content(event.message['id'])
+          tf = Tempfile.open("content")
+          tf.write(response.body)
+        end
     end
-    # events.each { |event|
-    #   case event
-    #   when Line::Bot::Event::Message
-    #     case event.type
-    #     when Line::Bot::Event::MessageType::Text
-    #       message = {
-    #        type: "template",
-    #        altText: data_hash["question"]["label"],
-    #        template: {
-    #          type: "confirm",
-    #          text: data_hash["question"]["body"]["content"],
-    #          actions: [
-    #            {
-    #              type: "message",
-    #              label: data_hash["question"]["choice"][0]["label"],
-    #              text: data_hash["question"]["choice"][0]["label"]
-    #            },
-    #            {
-    #              type: "message",
-    #              label: data_hash["question"]["choice"][1]["label"],
-    #              text: data_hash["question"]["choice"][1]["label"]
-    #            }
-    #          ]
-    #        }
-    #       }        
-    #       client.reply_message(event['replyToken'], message)
-    #     when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
-    #       response = client.get_message_content(event.message['id'])
-    #       tf = Tempfile.open("content")
-    #       tf.write(response.body)
-    #     end
-    # end
-  #}
+  }
     render status: 200, json: { message: 'OK' }
   end
 
