@@ -36,7 +36,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          if event['text'] == @data_hash["question"]["label"] then
+          if event.message['text'] == @data_hash["question"]["label"] then
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -57,7 +57,7 @@ class WebhookController < ApplicationController
              ]
            }
           }
-          elsif event['text'] == "いいえ" then
+          elsif event.message['text'] == "いいえ" then
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -78,7 +78,7 @@ class WebhookController < ApplicationController
              ]
            }
            }
-        　 elsif event['text'] == "はい" then
+        　 elsif event.message['text'] == "はい" then
            message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
