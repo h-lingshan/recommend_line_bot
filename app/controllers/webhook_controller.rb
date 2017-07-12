@@ -36,7 +36,7 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::Follow
         receive_follow(message_target)
         when Line::Bot::Event::MessageType::Text
-          if data_hash["context_name"].include?(event.message['text'])
+          if @data_hash["context_name"].include?(event.message['text'])
             message = {
               type: "template",
               altText: @data_hash["label"],
