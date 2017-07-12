@@ -38,24 +38,8 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           if @data_hash["question"]["label"].include?(event.message['text'])
             message = {
-              type: "template",
-              altText:@data_hash["question"]["label"]["content"],
-              template: {
-                type: "confirm",
-                text: @data_hash["question"]["body"],
-                actions: [
-                  {
-                     type: data_hash["question"]["choice"],
-                     label: data_hash["question"]["choice"]["label"],
-                     text: "yes"
-                  },
-                  {
-                     type: "message",
-                     label: "No",
-                     text: "no"
-                  }
-                ]
-              }
+              type: "text",
+              text: "友達登録ありがとうございます！"
             }
         #  end
          
