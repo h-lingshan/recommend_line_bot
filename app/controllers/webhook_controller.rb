@@ -38,7 +38,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::MessageType::Text
           message = {
            type: "template",
-           altText: @data_hash["question"]["body"]["content"],
+           altText: @data_hash["question"]["body"]["label"],
            template: {
              type: "confirm",
              text: @data_hash["question"]["body"]["content"],
