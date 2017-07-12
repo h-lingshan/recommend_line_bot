@@ -59,7 +59,12 @@ class WebhookController < ApplicationController
           elsif event.message["text"] == "はい" then
              message = {
                 type: "text",
-                text: data_hash["question"]["choice"][0]["finish"]["content"],
+                text: data_hash["question"]["choice"][0]["finish"]["content"]
+             }
+          else 
+             message = {
+                type: "text",
+                text: event.message["text"]
              }
           end
           client.reply_message(event['replyToken'], message)
