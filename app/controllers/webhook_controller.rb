@@ -56,22 +56,9 @@ class WebhookController < ApplicationController
              ]
            }
           }        
-          
+          client.reply_message(event['replyToken'], message)
       end
       end
-      if event.message["text"]=="はい"
-      case event
-      when Line::Bot::Event::Message
-        case event.type
-        when Line::Bot::Event::MessageType::Text
-          message = {
-           type: "text",
-           text: data_hash["question"]["choice"][0]["finish"]["content"]
-          }        
-          
-      end
-      end
-      client.reply_message(event['replyToken'], message)
   }
     render status: 200, json: { message: 'OK' }
   end
