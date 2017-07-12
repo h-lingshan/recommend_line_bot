@@ -36,7 +36,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          if event.message['text'] == @data_hash["question"]["label"] then
+          if event.message['text'] == @data_hash["question"]["label"]
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -57,48 +57,11 @@ class WebhookController < ApplicationController
              ]
            }
           }
-          elsif event.message['text'] == "いいえ" then
-          message = {
-           type: "template",
-           altText: @data_hash["question"]["body"]["content"],
-           template: {
-             type: "confirm",
-             text: @data_hash["question"]["body"]["content"],
-             actions: [
-               {
-                 type: "message",
-                 label: "yes",
-                 text: "yes"
-               },
-               {
-                 type: "message",
-                 label: "No",
-                 text: "no"
-               }
-             ]
-           }
-           }
-        　 elsif event.message['text'] == "はい" then
-           message = {
-           type: "template",
-           altText: @data_hash["question"]["body"]["content"],
-           template: {
-             type: "confirm",
-             text: @data_hash["question"]["body"]["content"],
-             actions: [
-               {
-                 type: "message",
-                 label: "yes",
-                 text: "yes"
-               },
-               {
-                 type: "message",
-                 label: "No",
-                 text: "no"
-               }
-             ]
-           }
-          }
+          else 
+            message = {
+              type: "text",
+              text: "友達登録ありがとうございます！"
+            }
           end
           client.reply_message(event['replyToken'], message)
         end
