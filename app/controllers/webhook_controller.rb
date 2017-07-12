@@ -41,7 +41,7 @@ class WebhookController < ApplicationController
            altText: @data_hash["question"]["body"]["content"],
            template: {
              type: "confirm",
-             text: "Are you sure?",
+             text: @data_hash["question"]["body"]["content"],
              actions: [
                {
                  type: "message",
