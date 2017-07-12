@@ -36,6 +36,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
       when Line::Bot::Event::MessageType::Text
+        if @data_hash["question"]["label"].include?(event['message']) 
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -57,6 +58,8 @@ class WebhookController < ApplicationController
            }
           }
           client.reply_message(event['replyToken'], message)
+        end
+        end
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])
           tf = Tempfile.open("content")
