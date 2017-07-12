@@ -35,7 +35,8 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-      when Line::Bot::Event::MessageType::Text
+        when Line::Bot::Event::MessageType::Text
+          if event['text'] == @data_hash["question"]["label"]
           message = {
            type: "template",
            altText: @data_hash["question"]["body"]["content"],
@@ -45,7 +46,49 @@ class WebhookController < ApplicationController
              actions: [
                {
                  type: "message",
-                 label: "Yes",
+                 label: "はい",
+                 text: "はい"
+               },
+               {
+                 type: "message",
+                 label: "いいえ",
+                 text: "いいえ"
+               }
+             ]
+           }
+          }
+          elsif event['text'] == "いいえ"
+          message = {
+           type: "template",
+           altText: @data_hash["question"]["body"]["content"],
+           template: {
+             type: "confirm",
+             text: @data_hash["question"]["body"]["content"],
+             actions: [
+               {
+                 type: "message",
+                 label: "yes",
+                 text: "yes"
+               },
+               {
+                 type: "message",
+                 label: "No",
+                 text: "no"
+               }
+             ]
+           }
+           }
+        　 elsif event['text'] == "はい"
+           message = {
+           type: "template",
+           altText: @data_hash["question"]["body"]["content"],
+           template: {
+             type: "confirm",
+             text: @data_hash["question"]["body"]["content"],
+             actions: [
+               {
+                 type: "message",
+                 label: "yes",
                  text: "yes"
                },
                {
@@ -56,6 +99,7 @@ class WebhookController < ApplicationController
              ]
            }
           }
+          end
           client.reply_message(event['replyToken'], message)
         end
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
