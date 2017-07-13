@@ -34,27 +34,28 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-        when Line::Bot::Event::MessageType::Text
-          message = {
-           type: "template",
-           altText: data_hash["question"]["label"],
-           template: {
-             type: "confirm",
-             text: data_hash["question"]["body"]["content"],
-             actions: [
-               {
-                 type: "message",
-                 label: data_hash["question"]["choice"][0]["label"],
-                 text: data_hash["question"]["choice"][0]["label"]
-               },
-               {
-                 type: "message",
-                 label: data_hash["question"]["choice"][1]["label"],
-                 text: data_hash["question"]["choice"][1]["label"]
-               }
-             ]
-           }
-          }        
+      when Line::Bot::Event::MessageType::Text
+            message = execute(event) 
+          # message = {
+          #  type: "template",
+          #  altText: data_hash["question"]["label"],
+          #  template: {
+          #    type: "confirm",
+          #    text: data_hash["question"]["body"]["content"],
+          #    actions: [
+          #      {
+          #        type: "message",
+          #        label: data_hash["question"]["choice"][0]["label"],
+          #        text: data_hash["question"]["choice"][0]["label"]
+          #      },
+          #      {
+          #        type: "message",
+          #        label: data_hash["question"]["choice"][1]["label"],
+          #        text: data_hash["question"]["choice"][1]["label"]
+          #      }
+          #    ]
+          #  }
+          # }        
           client.reply_message(event['replyToken'], message)
         end
       end 
@@ -62,14 +63,20 @@ class WebhookController < ApplicationController
     render status: 200, json: { message: 'OK' }
   end
 
-  def receive_follow(message_target)
-    client.push_message(
-      message_target.platform_id, # userIdが入る
-      {
-        type: "text",
-        text: "友達登録ありがとうございます！"
-      }
-    )
+  private
+  def execute(event)
+    text = event.message['text']
+
+    if text == "はじめまして"　then
+      msg = "Line Botです"
+    else
+      msg = "メッセージありがとうございます"
+    end
+    [{
+      type: 'text'
+      text: msg
+    }]
+    end
   end
 
 end
