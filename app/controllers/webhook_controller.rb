@@ -56,7 +56,7 @@ class WebhookController < ApplicationController
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
     elsif text.include?("いいえ") then
       replay_button(movie["question"]["choice"][1]["question"])
-    elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text).compact
+    elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text).compact then
       reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
     else
       reply_text("メッセージありがとうございます")
