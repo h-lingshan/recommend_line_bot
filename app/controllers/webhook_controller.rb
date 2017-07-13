@@ -35,23 +35,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          message = execute(event)
-            
-          client.reply_message(event['replyToken'], message)
-        end
-
-     # when Line::Bot::Event::Postback
-      #  client.reply_message(event['replyToken'], message)
-      end
-      
-    }
-    render status: 200, json: { message: 'OK' }
-  end
-
-  private
-    def execute(event)
-       text = event.message["text"]
-       message = {
+          message = {
            type: "template",
            altText: data_hash["question"]["label"],
            template: {
@@ -70,7 +54,22 @@ class WebhookController < ApplicationController
                }
              ]
            }
-          }     
-    end  
+          }        
+          client.reply_message(event['replyToken'], message)
+      end
+      
+    }
+    render status: 200, json: { message: 'OK' }
+  end
+
+  def receive_follow(message_target)
+    client.push_message(
+      message_target.platform_id, # userIdが入る
+      {
+        type: "text",
+        text: "友達登録ありがとうございます！"
+      }
+    )
+  end
 
 end
