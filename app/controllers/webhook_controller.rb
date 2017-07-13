@@ -76,7 +76,6 @@ class WebhookController < ApplicationController
       type: 'text'
       text: msg
     }]
-    end
   end
 
 end
