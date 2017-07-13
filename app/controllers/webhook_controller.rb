@@ -63,7 +63,8 @@ class WebhookController < ApplicationController
           tf.write(response.body)
         end
       end
-  }
+      end
+    }
     render status: 200, json: { message: 'OK' }
   end
 
