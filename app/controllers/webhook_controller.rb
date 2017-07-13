@@ -6,7 +6,7 @@ class WebhookController < ApplicationController
   def get_sample
    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
-    render :text =>    reply_text(data_hash["question"]["choice"][0]["finish"]["content"])
+    render :text =>    replay_button(data_hash["question"]["choice"][1]["question"])
     
   end 
 
@@ -46,13 +46,15 @@ class WebhookController < ApplicationController
   private
   def execute(event,movie)
     text = event.message['text']
-    type = "text"
+
     if text == "はじめまして" then
       reply_text(movie["context_name"].concat("です"))
     elsif text.include?("映画") then
       reply_template(movie["question"])
     elsif text.include?("はい") then
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
+    elsif text.include?("いいえ") then
+      replay_button(data_hash["question"]["choice"][1]["question"])
     else
       reply_text("メッセージありがとうございます")
     end
@@ -151,6 +153,45 @@ class WebhookController < ApplicationController
                 }
               ]
             }
+          ]
+        }
+      }
+    ]
+  end
+
+  def replay_button(question)
+    [
+      {
+        type: "template",
+        altText: question["label"],
+        template: 
+        {
+          type: "buttons",
+          thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
+          title: question["label"],
+          text: question["body"]["content"],
+          actions: 
+          [
+            {
+              type: "uri",
+              label: question["choice"][0]["label"],
+              uri: question["choice"][0]["content"]
+            },
+            {
+              type: "uri",
+              label: question["choice"][1]["label"],
+              data: question["choice"][1]["content"]
+            },
+            {
+              type: "uri",
+              label: question["choice"][2]["label"],
+              data: question["choice"][2]["content"]
+            },
+             {
+              type: "uri",
+              label: question["choice"][3]["label"],
+              data: question["choice"][3]["content"]
+            },
           ]
         }
       }
