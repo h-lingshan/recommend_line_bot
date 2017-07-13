@@ -16,7 +16,7 @@
                 "question": null,
                 "finish": {
                     "type": "text",
-                    "content": "ここから検索してね¥n https://google.co.jp"
+                    "content": "ここから検索してね\n https://google.co.jp"
                 }
             },
             {
@@ -39,7 +39,7 @@
                             "question": null,
                             "finish": {
                                 "type": "text",
-                                "content": "君の名の予約はこちらから¥n https://eiga.co.jp/reserve1"
+                                "content": "君の名の予約はこちらから\n https://eiga.co.jp/reserve1"
                             }
                         },
                         {
@@ -49,7 +49,7 @@
                             "question": null,
                             "finish": {
                                 "type": "text",
-                                "content": "君の名2の予約はこちらから¥n https://eiga.co.jp/reserve2"
+                                "content": "君の名2の予約はこちらから\n https://eiga.co.jp/reserve2"
                             }
                         },
                         {
@@ -59,7 +59,7 @@
                             "question": null,
                             "finish": {
                                 "type": "text",
-                                "content": "君の名3の予約はこちらから¥n https://eiga.co.jp/reserve3"
+                                "content": "君の名3の予約はこちらから\n https://eiga.co.jp/reserve3"
                             }
                         },
                         {
@@ -69,7 +69,7 @@
                             "question": null,
                             "finish": {
                                 "type": "text",
-                                "content": "君の名4の予約はこちらから¥n https://eiga.co.jp/reserve4"
+                                "content": "君の名4の予約はこちらから\n https://eiga.co.jp/reserve4"
                             }
                         }
                     ]
