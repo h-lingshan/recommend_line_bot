@@ -7,7 +7,7 @@ class WebhookController < ApplicationController
    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
    
-    render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"君の名は")["content"]
+    render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
     
   end 
 
@@ -56,7 +56,7 @@ class WebhookController < ApplicationController
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
     elsif text.include?("いいえ") then
       replay_button(movie["question"]["choice"][1]["question"])
-    elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text).compact then
+    elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!= nil  then
       reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
     else
       reply_text("メッセージありがとうございます")
