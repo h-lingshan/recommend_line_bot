@@ -6,7 +6,7 @@ class WebhookController < ApplicationController
   def get_sample
    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
-    render :text =>  test("映画",data_hash)
+    render :text =>  reply_carousel(data_hash["question"])
     
   end 
 
@@ -34,28 +34,8 @@ class WebhookController < ApplicationController
       case event
       when Line::Bot::Event::Message
         case event.type
-      when Line::Bot::Event::MessageType::Text
-            message = execute(event,data_hash) 
-          # message = {
-          #  type: "template",
-          #  altText: data_hash["question"]["label"],
-          #  template: {
-          #    type: "confirm",
-          #    text: data_hash["question"]["body"]["content"],
-          #    actions: [
-          #      {
-          #        type: "message",
-          #        label: data_hash["question"]["choice"][0]["label"],
-          #        text: data_hash["question"]["choice"][0]["label"]
-          #      },
-          #      {
-          #        type: "message",
-          #        label: data_hash["question"]["choice"][1]["label"],
-          #        text: data_hash["question"]["choice"][1]["label"]
-          #      }
-          #    ]
-          #  }
-          # }        
+        when Line::Bot::Event::MessageType::Text
+          message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         end
       end 
@@ -68,18 +48,111 @@ class WebhookController < ApplicationController
     text = event.message['text']
     type = "text"
     if text == "はじめまして" then
-      msg = movie["context_name"].concat("です")
-    elsif movie["question"]["label"].include?(text) then
-      msg = movie["question"]["body"]["content"]
+      reply_text(movie["context_name"].concat("です"))
+    elsif text.include?("映画") then
+      reply_template(movie["question"])
     elsif movie["question"]["choice"][0]["label"].include?(text) then
       msg = movie["question"]["choice"][0]["finish"]
     else
       msg = "メッセージありがとうございます"
     end
+ 
+  end
+
+  def reply_text(msg)
     [
       {
-      type: type,
+      type: "text",
       text: msg
+      }
+    ]
+  end
+
+  def reply_template(question)
+    [
+      {
+        type: "template",
+        altText: question["label"],
+        template: 
+        {
+          type: "confirm",
+          text: question["body"]["content"],
+          actions: 
+          [
+            {
+              type: "message",
+              label: question["choice"][0]["label"],
+              text: question["choice"][0]["label"]
+            },
+            {
+              type: "message",
+              label: question["choice"][1]["label"],
+              text: question["choice"][1]["label"]
+            }
+          ]
+        }
+      }
+    ]
+  end
+
+  def reply_carousel(question)
+    [
+      {
+        type: "template",
+        altText: "this is a carousel template",
+        template: 
+        {
+          type: "carousel",
+          columns: 
+          [
+            {
+              thumbnailImageUrl: "https://example.com/bot/images/item1.jpg",
+              title: "this is menu",
+              text: "description",
+              actions: 
+              [
+                {
+                  type: "postback",
+                  label: "Buy",
+                  data: "action=buy&itemid=111"
+                },
+                {
+                  type: "postback",
+                  label: "Add to cart",
+                  data: "action=add&itemid=111"
+                },
+                {
+                  type: "uri",
+                  label: "View detail",
+                  uri: "http://example.com/page/111"
+                }
+              ]
+            },
+            {
+              thumbnailImageUrl: "https://example.com/bot/images/item2.jpg",
+              title: "this is menu",
+              text: "description",
+              actions: 
+              [
+                {
+                  type: "postback",
+                  label: "Buy",
+                  data: "action=buy&itemid=222"
+                },
+                {
+                  type: "postback",
+                  label: "Add to cart",
+                  data: "action=add&itemid=222"
+                },
+                {
+                  type: "uri",
+                  label: "View detail",
+                  uri: "http://example.com/page/222"
+                }
+              ]
+            }
+          ]
+        }
       }
     ]
   end
