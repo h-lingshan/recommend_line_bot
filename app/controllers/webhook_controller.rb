@@ -6,9 +6,8 @@ class WebhookController < ApplicationController
   def get_sample
    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
-    @data_hash = data_hash
+    render :text =>  test("映画",data_hash)
     
-    render :text =>  test("はじめまして")
   end 
 
   def client
@@ -36,7 +35,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
       when Line::Bot::Event::MessageType::Text
-            message = execute(event) 
+            message = execute(event,data_hash) 
           # message = {
           #  type: "template",
           #  altText: data_hash["question"]["label"],
@@ -65,11 +64,33 @@ class WebhookController < ApplicationController
   end
 
   private
-  def execute(event)
+  def execute(event,movie)
     text = event.message['text']
+    type = "text"
+    if text == "はじめまして" then
+      msg = movie["context_name"].concat("です")
+    elsif movie["question"]["label"].include?(text) then
+      msg = movie["question"]["body"]["content"]
+    elsif movie["question"]["choice"][0]["label"].include?(text) then
+      msg = movie["question"]["choice"][0]["finish"]
+    else
+      msg = "メッセージありがとうございます"
+    end
+    [
+      {
+      type: type,
+      text: msg
+      }
+    ]
+  end
+
+  def test(text,question)
+    text = text
 
     if text == "はじめまして" then
       msg = "Line Botです"
+    elsif question["context_name"].include?(text) then
+      msg = question["context_name"]
     else
       msg = "メッセージありがとうございます"
     end
@@ -79,18 +100,5 @@ class WebhookController < ApplicationController
       text: msg
       }
     ]
-  end
-  def test(test)
-    text = test
-
-    if text == "はじめまして"
-      msg = "Line Botです"
-    else
-      msg = "メッセージありがとうございます"
-    end
-    [{
-      type: "text",
-      text: msg
-    }]
   end
 end
