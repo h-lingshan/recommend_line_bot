@@ -167,7 +167,7 @@ class WebhookController < ApplicationController
         template: 
         {
           type: "buttons",
-          thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
+          thumbnailImageUrl: "http://realsound.jp/wp-content/uploads/2017/05/rs-jishu-01.jpg",
           title: question["label"],
           text: question["body"]["content"],
           actions: 
@@ -187,11 +187,11 @@ class WebhookController < ApplicationController
               label: question["choice"][2]["label"],
               data: question["choice"][2]["content"]
             },
-             {
+            {
               type: "uri",
               label: question["choice"][3]["label"],
               data: question["choice"][3]["content"]
-            },
+            }
           ]
         }
       }
