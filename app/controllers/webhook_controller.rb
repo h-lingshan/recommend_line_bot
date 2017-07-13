@@ -54,7 +54,7 @@ class WebhookController < ApplicationController
     elsif text.include?("はい") then
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
     elsif text.include?("いいえ") then
-      reply_carousel(movie["question"]["choice"][1]["question"])
+      replay_button(movie["question"]["choice"][1]["question"])
     else
       reply_text("メッセージありがとうございます")
     end
