@@ -173,19 +173,19 @@ class WebhookController < ApplicationController
           actions:
           [
             {
-              type: "postback",
-              label: "Buy",
-              data: "action=buy&itemid=123"
+              type: "message",
+              label: question["choice"][0]["label"],
+              text: question["choice"][0]["label"]
             },
             {
-              type: "postback",
-              label: "Add to cart",
-              data: "action=add&itemid=123"
+              type: "message",
+              label: question["choice"][1]["label"],
+              text: question["choice"][1]["label"]
             },
             {
-              type: "uri",
-              label: "View detail",
-              uri: "http://example.com/page/123"
+              type: "message",
+              label: question["choice"][2]["label"],
+              text: question["choice"][2]["label"]
             }
           ]
         }
