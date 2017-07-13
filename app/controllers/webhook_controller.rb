@@ -6,7 +6,7 @@ class WebhookController < ApplicationController
   def get_sample
    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
-    render :text =>  reply_carousel(data_hash["question"])
+    render :text =>    reply_text(data_hash["question"]["choice"][0]["finish"]["content"])
     
   end 
 
@@ -51,10 +51,10 @@ class WebhookController < ApplicationController
       reply_text(movie["context_name"].concat("です"))
     elsif text.include?("映画") then
       reply_template(movie["question"])
-    elsif movie["question"]["choice"][0]["label"].include?(text) then
-      msg = movie["question"]["choice"][0]["finish"]
+    elsif text.include?("はい") then
+      reply_text(movie["question"]["choice"][0]["finish"]["content"])
     else
-      msg = "メッセージありがとうございます"
+      reply_text("メッセージありがとうございます")
     end
  
   end
