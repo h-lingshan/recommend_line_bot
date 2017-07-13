@@ -163,13 +163,13 @@ class WebhookController < ApplicationController
     [
       {
         type: "template",
-        altText: question["label"],
+        altText: "this is a buttons template",
         template: 
         {
           type: "buttons",
-          thumbnailImageUrl: "http://realsound.jp/wp-content/uploads/2017/05/rs-jishu-01.jpg",
-          title: question["label"],
-          text: question["body"]["content"],
+          thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
+          title: "Menu",
+          text: "Please select",
           actions:
           [
             {
