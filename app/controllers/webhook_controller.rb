@@ -169,7 +169,7 @@ class WebhookController < ApplicationController
           type: "buttons",
           thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
           title: question["body"]["content"],
-          text: question["body"]["content",
+          text: question["body"]["content"],
           actions:
           [
             {
