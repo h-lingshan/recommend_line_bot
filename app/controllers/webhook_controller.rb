@@ -61,7 +61,6 @@ class WebhookController < ApplicationController
     else
       reply_text("メッセージありがとうございます")
     end
- 
   end
 
   def reply_text(msg)
@@ -72,9 +71,11 @@ class WebhookController < ApplicationController
       }
     ]
   end
+
   def reply_text_from_json(question,msg)
     question["choice"].map{|h| h['finish'] if h['label']==msg}.compact.first
   end
+
   def reply_template(question)
     [
       {
@@ -172,7 +173,7 @@ class WebhookController < ApplicationController
         template: 
         {
           type: "buttons",
-          thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
+          thumbnailImageUrl: "http://jpnaverage.com/wp-content/uploads/%E6%98%A0%E7%94%BB%E3%83%95%E3%82%A3%E3%83%AB%E3%83%A0.jpg",
           title: question["body"]["content"],
           text: question["body"]["content"],
           actions:
