@@ -7,7 +7,8 @@ class WebhookController < ApplicationController
    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
     @data_hash = data_hash
-    render :text =>  data_hash
+    
+    render :text =>  test("はじめまして")
   end 
 
   def client
@@ -67,15 +68,29 @@ class WebhookController < ApplicationController
   def execute(event)
     text = event.message['text']
 
-    if text == "はじめまして"　then
+    if text == "はじめまして" then
+      msg = "Line Botです"
+    else
+      msg = "メッセージありがとうございます"
+    end
+    [
+      {
+      type: "text",
+      text: msg
+      }
+    ]
+  end
+  def test(test)
+    text = test
+
+    if text == "はじめまして"
       msg = "Line Botです"
     else
       msg = "メッセージありがとうございます"
     end
     [{
-      type: 'text'
+      type: "text",
       text: msg
     }]
   end
-
 end
