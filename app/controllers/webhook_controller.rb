@@ -60,30 +60,14 @@ class WebhookController < ApplicationController
       end
       end
       #はい
-      if event.message["text"]=="はい"
+      if event.message["text"]=="456"
       case event
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
           message = {
            type: "template",
-           altText: data_hash["question"]["label"],
-           template: {
-             type: "confirm",
-             text: data_hash["question"]["body"]["content"],
-             actions: [
-               {
-                 type: "message",
-                 label: data_hash["question"]["choice"][0]["label"],
-                 text: data_hash["question"]["choice"][0]["label"]
-               },
-               {
-                 type: "message",
-                 label: data_hash["question"]["choice"][1]["label"],
-                 text: data_hash["question"]["choice"][1]["label"]
-               }
-             ]
-           }
+           text: data_hash["question"]["choice"][0]["finish"]["content"]
           }        
           client.reply_message(event['replyToken'], message)
       end
