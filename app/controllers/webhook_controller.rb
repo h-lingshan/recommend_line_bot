@@ -56,8 +56,8 @@ class WebhookController < ApplicationController
            }
           }        
           client.reply_message(event['replyToken'], message)
-      end
-      
+        end
+      end 
     }
     render status: 200, json: { message: 'OK' }
   end
