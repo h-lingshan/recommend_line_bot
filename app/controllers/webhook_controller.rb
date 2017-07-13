@@ -3,11 +3,12 @@ require 'json'
 class WebhookController < ApplicationController
   protect_from_forgery with: :null_session # CSRF対策無効化
 
-　#jsonのフォマットを出力テスト用
   def get_sample
-   　file = File.read("db/sample.json")
+   file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
+   
     render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"君の名は")["content"]
+    
   end 
 
   def client
@@ -60,6 +61,7 @@ class WebhookController < ApplicationController
     else
       reply_text("メッセージありがとうございます")
     end
+ 
   end
 
   def reply_text(msg)
@@ -70,12 +72,9 @@ class WebhookController < ApplicationController
       }
     ]
   end
-　
-　#君の名は123を絞り
   def reply_text_from_json(question,msg)
     question["choice"].map{|h| h['finish'] if h['label']==msg}.compact.first
   end
-
   def reply_template(question)
     [
       {
@@ -173,7 +172,7 @@ class WebhookController < ApplicationController
         template: 
         {
           type: "buttons",
-          thumbnailImageUrl: "https://example.com/bot/images/item2.jpg",
+          thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
           title: question["body"]["content"],
           text: question["body"]["content"],
           actions:
@@ -199,7 +198,6 @@ class WebhookController < ApplicationController
     ]
   end
 
-　#テスト用
   def test(text,question)
     text = text
 
