@@ -36,11 +36,15 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    addressable (2.5.1)
+      public_suffix (~> 2.0, >= 2.0.2)
     arel (6.0.4)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.3)
     byebug (9.0.6)
+    choice (0.2.0)
+    coderay (1.1.1)
     coffee-rails (4.1.1)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.1.x)
@@ -49,19 +53,31 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
+    database_cleaner (1.6.1)
     debug_inspector (0.0.3)
+    diff-lcs (1.3)
     dotenv (2.2.1)
     dotenv-rails (2.2.1)
       dotenv (= 2.2.1)
       railties (>= 3.2, < 5.2)
     erubis (2.7.0)
     execjs (2.7.0)
+    factory_girl (4.8.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.8.0)
+      factory_girl (~> 4.8.0)
+      railties (>= 3.0.0)
+    fakeweb (1.3.0)
     faraday (0.12.1)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.11.0.1)
       faraday (>= 0.7.4, < 1.0)
+    geocoder (1.4.4)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
+    hashdiff (0.3.4)
     i18n (0.8.5)
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
@@ -76,6 +92,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.6.6)
       mime-types (>= 1.16, < 4)
+    method_source (0.8.2)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
@@ -83,12 +100,31 @@ GEM
     minitest (5.10.2)
     multi_json (1.12.1)
     multipart-post (2.0.0)
+    mysql2 (0.4.8)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     nokogiri (1.8.0-x64-mingw32)
       mini_portile2 (~> 2.2.0)
     pg (0.21.0)
     pg (0.21.0-x64-mingw32)
+    protected_attributes (1.1.4)
+      activemodel (>= 4.0.1, < 5.0)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.4.2)
+      byebug (~> 9.0)
+      pry (~> 0.10)
+    pry-doc (0.10.0)
+      pry (~> 0.9)
+      yard (~> 0.9)
+    pry-rails (0.3.6)
+      pry (>= 0.10.4)
+    pry-stack_explorer (0.4.9.2)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
+    public_suffix (2.0.5)
     rack (1.6.8)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -109,6 +145,11 @@ GEM
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6)
       rails-deprecated_sanitizer (>= 1.0.1)
+    rails-erd (1.5.2)
+      activerecord (>= 3.2)
+      activesupport (>= 3.2)
+      choice (~> 0.2.0)
+      ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
     rails_12factor (0.0.3)
@@ -123,6 +164,29 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (12.0.0)
     rdoc (4.3.0)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.0)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-rails (3.5.0)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
+    ruby-graphviz (1.2.3)
+    safe_yaml (1.0.4)
     sass (3.4.25)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -133,6 +197,7 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    slop (3.6.0)
     spring (2.0.2)
       activesupport (>= 4.2)
     sprockets (3.7.1)
@@ -159,23 +224,46 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    webmock (3.0.1)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff
+    yard (0.9.9)
 
 PLATFORMS
   ruby
   x64-mingw32
 
 DEPENDENCIES
+  addressable
   byebug
   coffee-rails (~> 4.1.0)
+  database_cleaner
   dotenv-rails
+  factory_girl_rails
+  fakeweb
   faraday
   faraday_middleware
+  geocoder
   jbuilder (~> 2.0)
   jquery-rails
   line-bot-api
+  mysql2 (>= 0.3.13, < 0.5)
   pg
+  protected_attributes
+  pry-byebug
+  pry-doc
+  pry-rails
+  pry-stack_explorer
   rails (= 4.2.5)
+  rails-erd
   rails_12factor
+  rspec (= 3.5.0)
+  rspec-core (= 3.5.0)
+  rspec-expectations (= 3.5.0)
+  rspec-mocks (= 3.5.0)
+  rspec-rails (= 3.5.0)
+  rspec-support (= 3.5.0)
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring
@@ -183,6 +271,7 @@ DEPENDENCIES
   turbolinks
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
+  webmock
 
 BUNDLED WITH
-   1.15.1
+   1.15.2

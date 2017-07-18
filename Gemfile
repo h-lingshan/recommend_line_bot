@@ -34,6 +34,9 @@ gem 'dotenv-rails'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'line-bot-api'
+gem 'geocoder'
+gem "gmaps4rails"
+gem 'mysql2', '>= 0.3.13', '< 0.5'
 group :development, :test do
   gem 'sqlite3'
 end
@@ -52,5 +55,27 @@ group :development do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+  gem 'byebug'
+  gem 'pry-rails'
+  gem 'pry-doc'
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
+  gem 'rails-erd'
+  gem 'protected_attributes'
+end
+
+group :test do
+  gem "rspec-rails", '= 3.5.0'
+  gem 'factory_girl_rails'
+  gem 'rspec', '= 3.5.0'
+  gem 'rspec-core', '= 3.5.0'
+  gem 'rspec-expectations', '= 3.5.0'
+  gem 'rspec-mocks', '= 3.5.0'
+  gem 'rspec-support', '= 3.5.0'
+
+  gem 'database_cleaner'
+  gem 'webmock'
+  gem 'fakeweb'
+  gem 'addressable'
 end
 

@@ -38,6 +38,9 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
+        when Line::Bot::Event::MessageType::Location
+          message = execute(event,data_hash)    
+          client.reply_message(event['replyToken'], message)
         end
       end 
     }
@@ -56,9 +59,11 @@ class WebhookController < ApplicationController
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
     elsif text.include?("いいえ") then
       replay_button(movie["question"]["choice"][1]["question"])
-    elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!= nil  then
+    elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text) then
       reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
-    else
+    elsif text == "位置情報"　then
+        reply_text("位置情報")
+  　else
       reply_text("メッセージありがとうございます")
     end
  
@@ -214,5 +219,18 @@ class WebhookController < ApplicationController
       text: msg
       }
     ]
+  end
+
+  def get_near_movie_theater(latitude, longitude)
+    search_url  = "https://map.yahooapis.jp/search/local/V1/localSearch"
+    url = search_url
+          << '?appid=' + ENV["YAHOO_CLIENT_ID"]
+          << '&dist=3'     # 3 km 以内
+          << '&gc=0424002' #/ 業種コード: 神社
+          << '&results=5'  # 最大 5 件
+          << '&lat=' + latitude
+          << '&lon=' + longitude
+          << '&output=json&sort=dist'
+
   end
 end
