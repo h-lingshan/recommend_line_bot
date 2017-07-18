@@ -38,6 +38,9 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
+        when Line::Bot::Event::MessageType::Location
+          message = execute(event,data_hash)    
+          client.reply_message(event['replyToken'], message)
         end
       end 
     }
@@ -58,6 +61,8 @@ class WebhookController < ApplicationController
       replay_button(movie["question"]["choice"][1]["question"])
     elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!=nil then
       reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
+    elsif text == "位置情報"
+      reply_text("位置")
     else
       reply_text("メッセージありがとうございます")
     end
