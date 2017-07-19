@@ -40,10 +40,27 @@ class WebhookController < ApplicationController
        end
      hash[:data] << row_data
    end
+    event =[
+    {
+      "events"=>[{
+        "type"=>"message", "replyToken"=>"f4ad1254b8b7448e82bb0d84de1a31bb", 
+        "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, 
+        "timestamp"=>1500361375769, 
+        "message"=>{"type"=>"text", "id"=>"6405222023772", "text"=>"映画を探す"}}], 
+        "webhook"=>{
+          "events"=>[{
+            "type"=>"message", "replyToken"=>"f4ad1254b8b7448e82bb0d84de1a31bb", 
+            "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, 
+            "timestamp"=>1500361375769, 
+            "message"=>{"type"=>"text", "id"=>"6405222023772", "text"=>"映画を探す"}}
+            ]
+        }
+    }
+    ]
 
 #puts hash.to_json
-    
-    render :text => "123"
+     Log.create(user_name: "123", type: "123", content: "22222", current_qid: "1-2", next_qid: "123")
+    render :text =>event
 
   end 
   
@@ -89,7 +106,7 @@ class WebhookController < ApplicationController
 
     if text == "はじめまして" then
       reply_text(movie["context_name"].concat("です"))
-      Log.create(user_name: event["source"]["userId"], type: event["source"]["user"], content: text, current_qid: movie["context_id"], next_qid: "")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "1-2", next_qid: "123")
     elsif text.include?("映画") then
       reply_template(movie["question"])
     elsif text.include?("はい") then
