@@ -107,21 +107,20 @@ class WebhookController < ApplicationController
     text = event.message['text']
 
     if text == "はじめまして" then
-      #Log.create(user_name: "0", type: "0", content: "0", current_qid: "0", next_qid: "0")
       reply_text(movie["context_name"].concat("です"))
-      #Log.create(user_name: "0", type: "0", content: text, current_qid: "0", next_qid: "0")
+      #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
     elsif text.include?("映画") then
       reply_template(movie["question"])
-      L#og.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
     elsif text.include?("はい") then
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
-     # Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["chi_id"], next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["chi_id"], next_qid: "0")
     elsif text.include?("いいえ") then
       replay_button(movie["question"]["choice"][1]["question"])
-      #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["chi_id"], next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["chi_id"], next_qid: "0")
     elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!=nil then
       reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
-      #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: reply_qid_from_json(movie["question"]["choice"][1]["question"],text), next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: reply_qid_from_json(movie["question"]["choice"][1]["question"],text), next_qid: "0")
     else
       reply_text("メッセージありがとうございます")
       #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
