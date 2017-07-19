@@ -83,7 +83,7 @@ class WebhookController < ApplicationController
     unless client.validate_signature(body, signature)
       error 400 do 'Bad Request' end
     end
-
+    Log.create(user_name: "1", type: "0", content: "0", current_qid: "0", next_qid: "0")
     events = client.parse_events_from(body)
     events.each { |event|
       case event
@@ -105,7 +105,7 @@ class WebhookController < ApplicationController
     text = event.message['text']
 
     if text == "はじめまして" then
-      Log.create(user_name: "0", type: "0", content: text, current_qid: movie["context_id"], next_qid: "0")
+      Log.create(user_name: "0", type: "0", content: "0", current_qid: "0", next_qid: "0")
       reply_text(movie["context_name"].concat("です"))
       #Log.create(user_name: "0", type: "0", content: text, current_qid: "0", next_qid: "0")
     elsif text.include?("映画") then
