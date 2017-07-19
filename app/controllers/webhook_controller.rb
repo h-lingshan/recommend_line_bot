@@ -105,7 +105,7 @@ class WebhookController < ApplicationController
     text = event.message['text']
 
     if text == "はじめまして" then
-      Log.create(user_name: event['source']['userId'], type: "event['source']['type']", content: text, current_qid: movie["context_id"], next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["context_id"], next_qid: "0")
       reply_text(movie["context_name"].concat("です"))
       #Log.create(user_name: "0", type: "0", content: text, current_qid: "0", next_qid: "0")
     elsif text.include?("映画") then
