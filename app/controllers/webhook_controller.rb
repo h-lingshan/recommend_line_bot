@@ -83,7 +83,7 @@ class WebhookController < ApplicationController
     unless client.validate_signature(body, signature)
       error 400 do 'Bad Request' end
     end
-    Log.create(user_name: "1", type: "0", content: "0", current_qid: "0", next_qid: "0")
+   # Log.create(user_name: "1", type: "0", content: "0", current_qid: "0", next_qid: "0")
     events = client.parse_events_from(body)
     events.each { |event|
       case event
