@@ -37,6 +37,8 @@ gem 'line-bot-api'
 gem 'geocoder'
 gem "gmaps4rails"
 gem 'mysql2', '>= 0.3.13', '< 0.5'
+gem 'google-api-client'
+gem 'roo'
 group :development, :test do
   gem 'sqlite3'
 end

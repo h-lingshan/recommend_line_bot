@@ -1,15 +1,52 @@
 require 'line/bot'
+require 'net/http'
 require 'json'
+require 'roo'
 class WebhookController < ApplicationController
   protect_from_forgery with: :null_session # CSRF対策無効化
 
   def get_sample
-   file = File.read("db/sample.json")
-    data_hash = JSON.parse(file)
+   #file = File.read("db/sample.json")
+    #data_hash = JSON.parse(file)
    
-    render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
+    #render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
+    #render :text => get_near_movietheather("35.660493", "139.775282")
+    doc = Roo::Spreadsheet.open("db/chatbot.xlsx")
+    #xlsx.sheet('Sheet1').row(1)
+   # xlsx.sheet('Sheet1').column(1)
+   # xlsx.first_row(sheet.sheets[0])
+    # => 1             # the number of the first row
+    #xlsx.last_row
+    # => 42            # the number of the last row
+    #xlsx.first_column
+    # => 1             # the number of the first column
+    #xlsx.last_column
+    # => 10            # the number of the last column
+    headers = {}
+   (doc.sheet("Sheet1").first_column..doc.sheet("Sheet1").last_column).each do |col|
+     headers[col] = doc.cell(doc.first_row, col)
+   end
+   #binding.pry
+   hash = {}
+   hash[:data] = []
+   ((doc.first_row + 1)..doc.last_row).each do |row|
+     row_data = {}
+       headers.keys.each do |col|
+         value = doc.cell(row, col)
+         
+    # rooは整数値もfloatとして返すので，整数値なら整数に変換する（必要なければコメントアウトして良い）
+         #value = value.to_i if doc.celltype(row, col) == :float && value.modulo(1) == 0.0
+         row_data[headers[col]] = value
+       end
+     hash[:data] << row_data
+   end
+
+#puts hash.to_json
     
+    render :text => "123"
+
   end 
+  
 
   def client
     @client ||= Line::Bot::Client.new { |config|
@@ -39,7 +76,6 @@ class WebhookController < ApplicationController
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
-          message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         end
       end 
@@ -53,6 +89,7 @@ class WebhookController < ApplicationController
 
     if text == "はじめまして" then
       reply_text(movie["context_name"].concat("です"))
+      Log.create(user_name: event["source"]["userId"], type: event["source"]["user"], content: text, current_qid: movie["context_id"], next_qid: "")
     elsif text.include?("映画") then
       reply_template(movie["question"])
     elsif text.include?("はい") then
@@ -61,8 +98,6 @@ class WebhookController < ApplicationController
       replay_button(movie["question"]["choice"][1]["question"])
     elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!=nil then
       reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
-    elsif text == "位置情報"
-      reply_text("位置")
     else
       reply_text("メッセージありがとうございます")
     end
@@ -219,5 +254,25 @@ class WebhookController < ApplicationController
       text: msg
       }
     ]
+  end
+
+  def get_near_movietheather(latitude, longitude)
+     yahoo_uri = "https://map.yahooapis.jp/search/local/V1/localSearch"
+     params = Hash.new
+     params.store("appid","dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-")
+     params.store("dist",3)
+     params.store("gc",0424002)
+     params.store("results",5)
+     params.store("lat",latitude)
+     params.store("lon",longitude)
+     params.store("output","json")
+     params.store("sort","dist")
+     #text = "https://map.yahooapis.jp/search/local/V1/localSearch" + "?appid=" + "dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-" + "&dist=3" + "&gc=0424002" + "&results=5"  + "&lat=" + latitude  + "&lon=" + longitude + "&output=json&sort=dist"
+     req = Net::HTTP::Post.new uri.path
+     req.set_form_data(params)
+     res = Net::HTTP.start(uri.host, uri.port) {|http| http.request req }
+     binding.pry
+     return res
+  
   end
 end

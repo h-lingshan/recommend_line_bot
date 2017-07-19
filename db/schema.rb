@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170718050324) do
+ActiveRecord::Schema.define(version: 20170719091205) do
+
+  create_table "logs", force: :cascade do |t|
+    t.string   "user_name"
+    t.string   "type"
+    t.string   "content"
+    t.string   "current_qid"
+    t.string   "next_qid"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "stores", force: :cascade do |t|
     t.float    "latitude"
