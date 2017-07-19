@@ -111,7 +111,7 @@ class WebhookController < ApplicationController
       #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
     elsif text.include?("映画") then
       reply_template(movie["question"])
-      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: movie["choice"][0]["ch_id"])
     elsif text.include?("はい") then
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
       Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["chi_id"], next_qid: "0")
