@@ -106,10 +106,11 @@ class WebhookController < ApplicationController
 
     if text == "はじめまして" then
       reply_text(movie["context_name"].concat("です"))
-      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["context_id"], next_qid: "0")
+      #Log.create(user_name: event['source']['userId'], type: "event['source']['type']", content: text, current_qid: movie["context_id"], next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: "0", content: text, current_qid: "0", next_qid: "0")
     elsif text.include?("映画") then
       reply_template(movie["question"])
-      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
+      L#og.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
     elsif text.include?("はい") then
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
      # Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["chi_id"], next_qid: "0")
