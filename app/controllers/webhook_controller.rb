@@ -11,60 +11,82 @@ class WebhookController < ApplicationController
    
     #render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
     #render :text => get_near_movietheather("35.660493", "139.775282")
-    doc = Roo::Spreadsheet.open("db/chatbot.xlsx")
-    #xlsx.sheet('Sheet1').row(1)
-   # xlsx.sheet('Sheet1').column(1)
-   # xlsx.first_row(sheet.sheets[0])
-    # => 1             # the number of the first row
-    #xlsx.last_row
-    # => 42            # the number of the last row
-    #xlsx.first_column
-    # => 1             # the number of the first column
-    #xlsx.last_column
-    # => 10            # the number of the last column
-    headers = {}
-   (doc.sheet("Sheet1").first_column..doc.sheet("Sheet1").last_column).each do |col|
-     headers[col] = doc.cell(doc.first_row, col)
-   end
-   #binding.pry
-   hash = {}
-   hash[:data] = []
-   ((doc.first_row + 1)..doc.last_row).each do |row|
-     row_data = {}
-       headers.keys.each do |col|
-         value = doc.cell(row, col)
-         
-    # rooは整数値もfloatとして返すので，整数値なら整数に変換する（必要なければコメントアウトして良い）
-         #value = value.to_i if doc.celltype(row, col) == :float && value.modulo(1) == 0.0
-         row_data[headers[col]] = value
-       end
-     hash[:data] << row_data
-   end
-    event =[
-    {
-      "events"=>[{
-        "type"=>"message", "replyToken"=>"f4ad1254b8b7448e82bb0d84de1a31bb", 
-        "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, 
-        "timestamp"=>1500361375769, 
-        "message"=>{"type"=>"text", "id"=>"6405222023772", "text"=>"映画を探す"}}], 
-        "webhook"=>{
-          "events"=>[{
-            "type"=>"message", "replyToken"=>"f4ad1254b8b7448e82bb0d84de1a31bb", 
-            "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, 
-            "timestamp"=>1500361375769, 
-            "message"=>{"type"=>"text", "id"=>"6405222023772", "text"=>"映画を探す"}}
-            ]
-        }
-    }
-    ]
 
-#puts hash.to_json
-     #Log.create(user_name: "123", type: "123", content: "22222", current_qid: "1-2", next_qid: "123")
-     # Log.create(user_name: "1", type: "0", content: "0", current_qid: "0", next_qid: "0")
-     # binding.pry
-    render :text => "123"
+    doc = Roo::Spreadsheet.open("db/chatbot.xlsx")
+    movies = []
+    doc.sheet("Sheet3").each(id: 'id', label: 'label', next_type: 'next_type', parent_id: 'parent_id', to_web: 'to_web') do |hash|   
+      movies.push(hash)
+    end
+
+    #親idだけ
+    parent_ids = []
+    parent_ids.push(movies.map{ |movie| movie[:parent_id]}.drop(1))
+    
+    #カテゴリーの最下層のidを配列に保持
+    term_bottom = []
+    movies.drop(1).each do | movie |
+      if !parent_ids.to_s.include?(movie[:id].to_s)
+        term_bottom.push(movie[:id])
+      end
+    end
+
+    #最下層の配列をループして木構造の頂点まで
+    category = []
+    term_bottom.each do | id |
+      category.push(set_ids(id, movies))
+    end
+   
+    # category.each do | ids |
+    #   ids.each do | id |
+
+    #     movie = movies.select{|movie| movie[:id]== id}[0]
+        
+    #     if movie[:parent_id].to_i == 0
+    #       json << "id" << ":" << movie[:id].to_s
+    #       json << ","
+    #       json << "label" << ":" << movie[:label].to_s
+    #       json << ","
+    #       json << "next_type" << ":" << movie[:next_type].to_s
+    #     else
+          
+    #     end
+    #   end
+    # end
+
+   
+    binding.pry
+    root = movies.second
+    map = {}
+
+    movies.drop(2).each do |e|
+      map[e[:id]] = e
+    end
+
+    @@tree = {}
+
+      movies.drop(2).each do |e|
+        pid = e[:parent_id]
+        if pid == nil || !map.has_key?(pid)
+          (@@tree[root] ||= []) << e
+        else
+          (@@tree[map[pid]] ||= []) << e
+        end
+      end
+    binding.pry
+    render :text => json
 
   end 
+
+  def print_tree(item, level)
+  items = @@tree[item]
+  unless items == nil
+    indent = level > 0 ? sprintf("%#{level * 2}s", " ") : ""
+    items.each do |e|
+      puts "#{indent}-#{e[:title]}"
+      print_tree(e, level + 1)
+    end
+  end
+end
   
 
   def client
@@ -107,8 +129,8 @@ class WebhookController < ApplicationController
     text = event.message['text']
 
     if text == "はじめまして" then
-      reply_text(movie["context_name"].concat("です"))
-      #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
+      #reply_text(movie["context_name"].concat("です"))
     elsif text.include?("映画") then 
       Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["qid"], next_qid: movie["question"]["choice"][0]["ch_id"])
       reply_template(movie["question"])
@@ -298,8 +320,21 @@ class WebhookController < ApplicationController
      req = Net::HTTP::Post.new uri.path
      req.set_form_data(params)
      res = Net::HTTP.start(uri.host, uri.port) {|http| http.request req }
-     binding.pry
+    
      return res
   
+  end
+
+  def set_ids(id, movies, args = [])
+    if id == 0
+      return args.reverse
+    else
+      args.push(id)
+      movies.each do | movie |
+        if movie[:id] == id
+          return set_ids(movie[:parent_id], movies, args)
+        end
+      end
+    end
   end
 end
