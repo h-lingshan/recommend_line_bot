@@ -85,7 +85,7 @@ class WebhookController < ApplicationController
     unless client.validate_signature(body, signature)
       error 400 do 'Bad Request' end
     end
-    Log.create(user_name: "1", type: "0", content: "0", current_qid: "0", next_qid: "0")
+
     events = client.parse_events_from(body)
     events.each { |event|
       case event
@@ -113,10 +113,10 @@ class WebhookController < ApplicationController
       Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["qid"], next_qid: movie["question"]["choice"][0]["ch_id"])
       reply_template(movie["question"])
     elsif text.include?("はい") then    
-      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["chi_id"], next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["choice"][0]["ch_id"], next_qid: "0")
       reply_text(movie["question"]["choice"][0]["finish"]["content"])
     elsif text.include?("いいえ") then 
-      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["chi_id"], next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["choice"][1]["ch_id"], next_qid: movie["question"]["choice"][1]["question"]["ch_id"])
       replay_button(movie["question"]["choice"][1]["question"])
     elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!=nil then
       Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: reply_qid_from_json(movie["question"]["choice"][1]["question"],text), next_qid: "0")
