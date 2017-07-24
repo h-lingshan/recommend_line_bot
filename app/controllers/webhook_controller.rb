@@ -14,80 +14,19 @@ class WebhookController < ApplicationController
 
     doc = Roo::Spreadsheet.open("db/chatbot.xlsx")
     movies = []
-    doc.sheet("Sheet3").each(id: 'id', label: 'label', next_type: 'next_type', parent_id: 'parent_id', to_web: 'to_web') do |hash|   
+    doc.sheet("Sheet4").each(id: 'id', label: 'label', next_type: 'next_type', parent_id: 'parent_id', to_web: 'to_web') do |hash|   
       movies.push(hash)
     end
-
-    #親idだけ
-    parent_ids = []
-    parent_ids.push(movies.map{ |movie| movie[:parent_id]}.drop(1))
+   
+    nested_hash = Hash[ movies.drop(1).map{|e| [e[:id], e.merge(children: [])]}]
+    nested_hash.each do |id, item|
+      parent = nested_hash[item[:parent_id]]
+      parent[:children] << item if parent
+    end
     
-    #カテゴリーの最下層のidを配列に保持
-    term_bottom = []
-    movies.drop(1).each do | movie |
-      if !parent_ids.to_s.include?(movie[:id].to_s)
-        term_bottom.push(movie[:id])
-      end
-    end
-
-    #最下層の配列をループして木構造の頂点まで
-    category = []
-    term_bottom.each do | id |
-      category.push(set_ids(id, movies))
-    end
-   
-    # category.each do | ids |
-    #   ids.each do | id |
-
-    #     movie = movies.select{|movie| movie[:id]== id}[0]
-        
-    #     if movie[:parent_id].to_i == 0
-    #       json << "id" << ":" << movie[:id].to_s
-    #       json << ","
-    #       json << "label" << ":" << movie[:label].to_s
-    #       json << ","
-    #       json << "next_type" << ":" << movie[:next_type].to_s
-    #     else
-          
-    #     end
-    #   end
-    # end
-
-   
-    binding.pry
-    root = movies.second
-    map = {}
-
-    movies.drop(2).each do |e|
-      map[e[:id]] = e
-    end
-
-    @@tree = {}
-
-      movies.drop(2).each do |e|
-        pid = e[:parent_id]
-        if pid == nil || !map.has_key?(pid)
-          (@@tree[root] ||= []) << e
-        else
-          (@@tree[map[pid]] ||= []) << e
-        end
-      end
-    binding.pry
-    render :text => json
-
+    tree = JSON.pretty_generate(nested_hash.select { |id, item| item[:parent_id].nil? }.values)
+    render :text => tree
   end 
-
-  def print_tree(item, level)
-  items = @@tree[item]
-  unless items == nil
-    indent = level > 0 ? sprintf("%#{level * 2}s", " ") : ""
-    items.each do |e|
-      puts "#{indent}-#{e[:title]}"
-      print_tree(e, level + 1)
-    end
-  end
-end
-  
 
   def client
     @client ||= Line::Bot::Client.new { |config|
@@ -97,7 +36,7 @@ end
   end
 
   def callback
-    file = File.read("db/sample.json")
+    file = File.read("db/test.json")
     data_hash = JSON.parse(file)
 
     body = request.body.read
@@ -324,17 +263,9 @@ end
      return res
   
   end
-
-  def set_ids(id, movies, args = [])
-    if id == 0
-      return args.reverse
-    else
-      args.push(id)
-      movies.each do | movie |
-        if movie[:id] == id
-          return set_ids(movie[:parent_id], movies, args)
-        end
-      end
-    end
-  end
 end
+
+
+
+
+
