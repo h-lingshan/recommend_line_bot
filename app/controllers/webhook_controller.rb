@@ -1,31 +1,18 @@
 require 'line/bot'
 require 'net/http'
+require 'uri'
 require 'json'
 require 'roo'
 class WebhookController < ApplicationController
   protect_from_forgery with: :null_session # CSRF対策無効化
+ 
 
   def get_sample
    #file = File.read("db/sample.json")
     #data_hash = JSON.parse(file)
    
     #render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
-    #render :text => get_near_movietheather("35.660493", "139.775282")
-
-    doc = Roo::Spreadsheet.open("db/chatbot.xlsx")
-    movies = []
-    doc.sheet("Sheet4").each(id: 'id', label: 'label', next_type: 'next_type', parent_id: 'parent_id', to_web: 'to_web') do |hash|   
-      movies.push(hash)
-    end
-   
-    nested_hash = Hash[ movies.drop(1).map{|e| [e[:id], e.merge(children: [])]}]
-    nested_hash.each do |id, item|
-      parent = nested_hash[item[:parent_id]]
-      parent[:children] << item if parent
-    end
-    
-    tree = JSON.pretty_generate(nested_hash.select { |id, item| item[:parent_id].nil? }.values)
-    render :text => tree
+    render :text => get_near_movietheather("35.660493", "139.775282")
   end 
 
   def client
@@ -245,24 +232,19 @@ class WebhookController < ApplicationController
   end
 
   def get_near_movietheather(latitude, longitude)
-     yahoo_uri = "https://map.yahooapis.jp/search/local/V1/localSearch"
-     params = Hash.new
-     params.store("appid","dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-")
-     params.store("dist",3)
-     params.store("gc",0424002)
-     params.store("results",5)
-     params.store("lat",latitude)
-     params.store("lon",longitude)
-     params.store("output","json")
-     params.store("sort","dist")
-     #text = "https://map.yahooapis.jp/search/local/V1/localSearch" + "?appid=" + "dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-" + "&dist=3" + "&gc=0424002" + "&results=5"  + "&lat=" + latitude  + "&lon=" + longitude + "&output=json&sort=dist"
-     req = Net::HTTP::Post.new uri.path
-     req.set_form_data(params)
-     res = Net::HTTP.start(uri.host, uri.port) {|http| http.request req }
-    
-     return res
+     yahoo_uri = URI.parse("https://map.yahooapis.jp/search/local/V1/localSearch")
+
+     http = Net::HTTP.new(yahoo_uri.host, yahoo_uri.port)
+     http.use_ssl = true 
+     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+     req = Net::HTTP::Post.new(yahoo_uri.path)
+     req.set_form_data({'appid' => 'dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-', 'output' => 'json'})
+     res = http.request(req)
+
+  binding.pry
   
   end
+
 end
 
 

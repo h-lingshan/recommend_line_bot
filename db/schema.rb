@@ -11,7 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170719091205) do
+ActiveRecord::Schema.define(version: 20170724064944) do
+
+  create_table "data_files", force: :cascade do |t|
+    t.binary   "upload_file"
+    t.string   "upload_filename"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
 
   create_table "logs", force: :cascade do |t|
     t.string   "user_name"

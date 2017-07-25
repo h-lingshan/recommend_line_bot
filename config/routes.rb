@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get 'fileuploads/index'
+
+  get 'fileuploads/create'
+
+  get 'fileuploads/new'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -55,5 +61,5 @@ Rails.application.routes.draw do
   #   end
   post '/callback' => 'webhook#callback'
   get '/' => 'webhook#get_sample'
-  
+  resources :fileuploads, only: [:index, :create, :new]
 end
