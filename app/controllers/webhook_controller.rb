@@ -1,8 +1,7 @@
 require 'line/bot'
-require 'net/http'
-require 'uri'
 require 'json'
 require 'roo'
+require 'open-uri'
 class WebhookController < ApplicationController
   protect_from_forgery with: :null_session # CSRF対策無効化
  
@@ -12,7 +11,7 @@ class WebhookController < ApplicationController
     #data_hash = JSON.parse(file)
    
     #render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
-    render :text => get_near_movietheather("35.660493", "139.775282")
+    render :json => get_near_movietheather("35.660493", "139.775282")
   end 
 
   def client
@@ -23,7 +22,7 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    file = File.read("db/test.json")
+    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
 
     body = request.body.read
@@ -232,17 +231,49 @@ class WebhookController < ApplicationController
   end
 
   def get_near_movietheather(latitude, longitude)
-     yahoo_uri = URI.parse("https://map.yahooapis.jp/search/local/V1/localSearch")
+    yahoo_url = "https://map.yahooapis.jp/search/local/V1/localSearch"
+    params = {
+      'appid' => 'dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-',
+      'dist' => '5',
+      'gc' => '0305001',
+      'results' => '5',
+      'lat' => latitude,
+      'lon' => longitude,
+      'output' => 'json',
+      'sort' => 'dist'
+    }
+    url = yahoo_url + '?' + URI.encode_www_form(params)
+    json = open(url).read
+    data = JSON.parse(json)['Feature']
 
-     http = Net::HTTP.new(yahoo_uri.host, yahoo_uri.port)
-     http.use_ssl = true 
-     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-     req = Net::HTTP::Post.new(yahoo_uri.path)
-     req.set_form_data({'appid' => 'dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-', 'output' => 'json'})
-     res = http.request(req)
+    movie_theaters = []
+    
+    data.each do |item|
+      map = {}
+      map["uid"] = item['Property']['Uid']
+      map["name"] = item['Name']
+      map["address"] = item['Property']['Address']
+      map["coords"] = item['Geometry']['Coordinates'].split(',')
+      map["map_longitude"] = map["coords"][0]
+      map["map_latitude"] = map["coords"][1]
+      movie_theaters.push(map)
+    end
+    movie_theaters.to_json
+    #binding.pry
 
-  binding.pry
-  
+  end
+
+  def get_distanceInKilloMeters(latitude1, longitude1, latitude2, longitude2) 
+    yahoo_dis_url = 'https://map.yahooapis.jp/dist/V1/distance'
+    params = {
+      'appid' => 'dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-',
+      'coordinates' => longitude1 + ',' + latitude1 + encodeURIComponent(' ') + longitude2 + ',' + latitude2,
+      'output' => 'json'
+    }
+    url = yahoo_url + '?' + URI.encode_www_form(params)
+    json = open(url).read
+    distance = JSON.parse(json)['Feature'][0]['Geometry']['Distance']
+    result = Math.round(distance * 10) /10
   end
 
 end
