@@ -81,8 +81,8 @@ class WebhookController < ApplicationController
   end
 
   def execute_near_movietheather(event)
-    build_template('35.660477','139.775282')
-    #build_template(event['latitude'],event['longitude'])
+    #build_template('35.660477','139.775282')
+    build_template(event['latitude'].to_s,event['longitude'].to_s)
   end
 
   def reply_text(msg)
@@ -221,7 +221,8 @@ class WebhookController < ApplicationController
       }
     ]
   end
-
+　
+  #近くの映画館
   def actions
     [
       {
@@ -256,24 +257,6 @@ class WebhookController < ApplicationController
           type: 'carousel',
           columns: @columns
         }
-      }
-    ]
-  end
-
-  def test(text,question)
-    text = text
-
-    if text == "はじめまして" then
-      msg = "Line Botです"
-    elsif question["context_name"].include?(text) then
-      msg = question["context_name"]
-    else
-      msg = "メッセージありがとうございます"
-    end
-    [
-      {
-      type: "text",
-      text: msg
       }
     ]
   end
