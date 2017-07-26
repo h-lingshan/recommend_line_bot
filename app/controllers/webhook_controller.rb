@@ -82,7 +82,7 @@ class WebhookController < ApplicationController
 
   def execute_near_movietheather(event)
     #build_template('35.660477','139.775282')
-    build_template(event['message']['latitude'],event['message']['longitude'])
+    build_template(event['message']['latitude'].to_s,event['message']['longitude'].to_s)
   end
 
   def reply_text(msg)
@@ -221,7 +221,7 @@ class WebhookController < ApplicationController
       }
     ]
   end
-  
+
   def actions
     [
       {
