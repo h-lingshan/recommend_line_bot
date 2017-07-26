@@ -46,7 +46,7 @@ class WebhookController < ApplicationController
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
-          message = execute_near_movietheather(event)
+          message = 
           client.reply_message(event['replyToken'], message)
         end
       end 
@@ -80,8 +80,7 @@ class WebhookController < ApplicationController
  
   end
 
-  def execute_near_movietheather(event)
-    build_template(event.message['latitude'],event.message['longitude'])
+  def execute_near_movietheather
   end
 
   def reply_text(msg)
@@ -322,7 +321,7 @@ class WebhookController < ApplicationController
      
     json = open(url).read
     distance = JSON.parse(json)['Feature'][0]['Geometry']['Distance']
-    result = distance.round(distance * 10) /10
+    result = distance.round(distance.to_f * 10) /10
   end
 
   def get_google_search_url(query)
@@ -334,7 +333,7 @@ class WebhookController < ApplicationController
   end
 
   def build_template(latitude, longitude)
-    data = get_near_movietheather(latitude, longitude)
+    data = get_near_movietheather("35.660493", "139.775282")
     data.each do | item |  
       @title = item["name"]
       @distance = item["distance"]
