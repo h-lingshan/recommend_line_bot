@@ -11,6 +11,10 @@ class WebhookController < ApplicationController
     #data_hash = JSON.parse(file)
    
     #render :text => reply_text_from_json(data_hash["question"]["choice"][1]["question"],"123")!= nil 
+    #binding.pry
+    #messages
+    
+    build_template
     render :json => get_near_movietheather("35.660493", "139.775282")
   end 
 
@@ -42,6 +46,7 @@ class WebhookController < ApplicationController
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
+          message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
       end 
@@ -73,6 +78,10 @@ class WebhookController < ApplicationController
       #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
     end
  
+  end
+
+  def execute_near_movietheather(event)
+    build_template(event.message['latitude'],event.message['longitude'])
   end
 
   def reply_text(msg)
@@ -212,6 +221,44 @@ class WebhookController < ApplicationController
     ]
   end
 
+  def actions
+    [
+      {
+        type: 'uri',
+        label: 'この映画館を検索',
+        uri: @googleSearchUrl
+      },
+      {
+        type: 'uri',
+        label: 'ここからのルート',
+        uri: @googleMapRouteUrl
+      }
+    ]
+  end
+
+  def columns
+    [
+      {
+        title: @title,
+        text: 'ここから'+@distance.to_s+'km - '+ @address,
+        actions: actions
+      }
+    ]
+  end
+
+  def messages
+    [
+      {
+        type: 'template',
+        altText: 'なにか',
+        template: {
+          type: 'carousel',
+          columns: @columns
+        }
+      }
+    ]
+  end
+
   def test(text,question)
     text = text
 
@@ -256,26 +303,48 @@ class WebhookController < ApplicationController
       map["coords"] = item['Geometry']['Coordinates'].split(',')
       map["map_longitude"] = map["coords"][0]
       map["map_latitude"] = map["coords"][1]
+      map["distance"] = get_distanceInKilloMeters(latitude,longitude,map["map_latitude"],map["map_longitude"])
+      map["google_search"] = get_google_search_url(map["name"])
+      map["how_to_go"] = get_google_map_route_url(latitude,longitude,map["map_latitude"],map["map_longitude"])
       movie_theaters.push(map)
     end
-    movie_theaters.to_json
-    #binding.pry
-
+    movie_theaters
   end
 
   def get_distanceInKilloMeters(latitude1, longitude1, latitude2, longitude2) 
     yahoo_dis_url = 'https://map.yahooapis.jp/dist/V1/distance'
     params = {
+      'coordinates' => longitude1 + ',' + latitude1 +  URI.encode_www_form_component(' ') + longitude2 + ',' + latitude2,
       'appid' => 'dj00aiZpPUVTUEpFMHVZNng4UyZzPWNvbnN1bWVyc2VjcmV0Jng9YjA-',
-      'coordinates' => longitude1 + ',' + latitude1 + encodeURIComponent(' ') + longitude2 + ',' + latitude2,
       'output' => 'json'
     }
-    url = yahoo_url + '?' + URI.encode_www_form(params)
+    url = yahoo_dis_url + '?' + URI.encode_www_form(params)
+     
     json = open(url).read
     distance = JSON.parse(json)['Feature'][0]['Geometry']['Distance']
-    result = Math.round(distance * 10) /10
+    result = distance.round(distance * 10) /10
   end
 
+  def get_google_search_url(query)
+    'https://www.google.co.jp/search?q=' + URI.encode_www_form_component(query) + '&ie=UTF-8'
+  end
+
+  def get_google_map_route_url(srcLatitude, srcLongitude, destLatitude, destLongitude) 
+    'http://maps.google.com/maps' + '?saddr=' +srcLatitude + ',' + srcLongitude + '&daddr=' + destLatitude + ',' + destLongitude+ '&dirflg=w';
+  end
+
+  def build_template(latitude, longitude)
+    data = get_near_movietheather(latitude, longitude)
+    data.each do | item |  
+      @title = item["name"]
+      @distance = item["distance"]
+      @address = item["address"]
+      @googleSearchUrl = item["google_search"]
+      @googleMapRouteUrl = item["how_to_go"]
+      @columns=columns
+    end
+    messages   
+  end
 end
 
 
