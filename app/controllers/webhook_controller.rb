@@ -80,7 +80,7 @@ class WebhookController < ApplicationController
  
   end
 
-  def execute_near_movietheather
+  def execute_near_movietheather(event)
     build_template(event['latitude'],event['longitude'])
   end
 
