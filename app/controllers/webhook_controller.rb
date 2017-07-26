@@ -46,7 +46,7 @@ class WebhookController < ApplicationController
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
-          message = 
+          message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
       end 
@@ -81,6 +81,7 @@ class WebhookController < ApplicationController
   end
 
   def execute_near_movietheather
+    longitude(event['latitude'],event['longitude'])
   end
 
   def reply_text(msg)
@@ -333,7 +334,7 @@ class WebhookController < ApplicationController
   end
 
   def build_template(latitude, longitude)
-    data = get_near_movietheather("35.660493", "139.775282")
+    data = get_near_movietheather(latitude, longitude)
     data.each do | item |  
       @title = item["name"]
       @distance = item["distance"]
