@@ -221,8 +221,7 @@ class WebhookController < ApplicationController
       }
     ]
   end
-　
-  #近くの映画館
+  
   def actions
     [
       {
