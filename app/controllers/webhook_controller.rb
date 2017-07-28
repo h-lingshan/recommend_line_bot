@@ -67,8 +67,8 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    #text =  event.message['text']
-    text = "映画を探す"
+    text =  event.message['text']
+    #text = "映画を探す"
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1", nil)
       if result["next_type"] == "message" && result["children"].length >= 2
@@ -86,61 +86,10 @@ class WebhookController < ApplicationController
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-    elsif text.include?("YES") || text.include?("NO")
-      result = deep_find_value_with_key(movie,event)
-      if result["children"].length >= 2
-        result["children"].each do |item|
-          if item["label"] == text && item["children"].length > 0 
-            result = deep_find_value_with_key(movie,item["id"].to_s)
-            result["children"].each do |a|
-              @confirm_actions = []
-              if a["next_type"] == nil && a["children"].length > 0
-                a["children"].each do |b|
-                  @label = b["label"]
-                  @text = b["label"]
-                  @post_id = "id="+ b["id"].to_s+ "&"+ "parent_id="+ b["parent_id"].to_s
-                  @confirm_actions.push(confirm_actions[0])
-                end
-              @altText = a["label"]
-              @type = template_type.find {|item| item == "buttons" }
-              end
-            end
-          return reply_template
-          end 
-        end 
-        
-      end
-    #else
-      #"123"
-    
-     #  session[:current_id] ||= "1"
-     #reply_template
-     #end 
-  end
-   # else
-      #result = deep_find_value_with_key(movie,@current_id)
-       
-    # if text == "はじめまして" then
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
-    #   #reply_text(movie["context_name"].concat("です"))
-    # elsif text.include?("映画") then 
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["qid"], next_qid: movie["question"]["choice"][0]["ch_id"])
-    #   deep_find_value_with_key(movie,1)
-    #   reply_template(movie["question"])
-    # elsif text.include?("はい") then    
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["choice"][0]["ch_id"], next_qid: "0")
-    #   reply_text(movie["question"]["choice"][0]["finish"]["content"])
-    # elsif text.include?("いいえ") then 
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["choice"][1]["ch_id"], next_qid: movie["question"]["choice"][1]["question"]["ch_id"])
-    #   replay_button(movie["question"]["choice"][1]["question"])
-    # elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!=nil then
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: reply_qid_from_json(movie["question"]["choice"][1]["question"],text), next_qid: "0")
-    #   reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
-    # else
-    #   reply_text("メッセージありがとうございます")
-    #   #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
-    # end
- 
+    else
+      #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
+      reply_text("メッセージありがとうございます")
+    end  
   end
 
   def execute_post_back(event,movie)
@@ -215,8 +164,7 @@ class WebhookController < ApplicationController
   end
   
   def build_template_message(movie)
-    #text = event.message['text']
-    text ="NO"
+    text = event.message['text']
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1")
       @current_id = result["id"]
@@ -232,7 +180,7 @@ class WebhookController < ApplicationController
           @altText = result["label"]
           @current_id = result["id"]
           @type = template_type.find {|item| item == "confirm" }
-          #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
+          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
     elsif text.include?("YES") || text.include?("NO")
@@ -282,7 +230,6 @@ class WebhookController < ApplicationController
         type: "postback",
         data: @post_id,
         label: @label
-        #text: @text
       }
     ]
   end
