@@ -7,7 +7,7 @@ class WebhookController < ApplicationController
  
 
   def get_sample
-    file = File.read("db/test.json")
+    file = File.read("db/sample.json")
     data_hash = JSON.parse(file)
     #binding.pry
     #result=deep_find_value_with_key(data_hash,"1")
@@ -20,7 +20,7 @@ class WebhookController < ApplicationController
     
     #build_template execute_near_movietheather("222")
     #render :json => deep_find_value_with_key(data_hash,"3")
-    render :text =>  execute("",data_hash)
+    render :json =>  build_template_message(data_hash)
   end 
 
   def client
@@ -81,6 +81,29 @@ class WebhookController < ApplicationController
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
+     elsif text.include?("YES") || text.include?("NO")
+      result = deep_find_value_with_key(movie,@current_id)
+      if result["children"].length >= 2
+        result["children"].each do |item|
+          if item["label"] == text && item["children"].length > 0 
+            result = deep_find_value_with_key(movie,item["id"].to_s)
+            result["children"].each do |a|
+              @confirm_actions = []
+              if a["next_type"] == nil && a["children"].length > 0
+                a["children"].each do |b|
+                  @label = b["label"]
+                  @text = b["label"]
+                  @confirm_actions.push(confirm_actions[0])
+                end
+                @altText = a["label"]
+                @current_id = a["id"]
+                @type = template_type.find {|item| item == "buttons" }
+              end
+            end
+            reply_template
+          end
+        end 
+      end 
     end
    # else
       #result = deep_find_value_with_key(movie,@current_id)
@@ -150,13 +173,13 @@ class WebhookController < ApplicationController
     question["choice"].map{|h| h['ch_id'] if h['label']==msg}.compact.first
   end
   
-  def build_template_message(movie,id,message)
-    if message == "映画"
-       result=deep_find_value_with_key(movie,id)
-       @current_id = result["id"]
-    else
-      result=deep_find_value_with_key(movie,id)
-      if result["next_type"]== "message" && result["children"].length >= 2
+  def build_template_message(movie)
+    #text = event.message['text']
+    text ="NO"
+    if text.include?("映画を探す")
+      result = deep_find_value_with_key(movie,"1")
+      @current_id = result["id"]
+      if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
         result["children"].each do |a|
           #action
@@ -166,20 +189,35 @@ class WebhookController < ApplicationController
         end
           #template
           @altText = result["label"]
-          @type = template_type.find {|item| item == "confirm" }
           @current_id = result["id"]
+          @type = template_type.find {|item| item == "confirm" }
+          #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
-        
-        elsif result["next_type"] == "question" && result["children"].length >= 2
-          #reply_template_2
-        else
-          if result["children"].length>2
+      end
+    elsif text.include?("YES") || text.include?("NO")
+      result = deep_find_value_with_key(movie,"1")
+      if result["children"].length >= 2
+        result["children"].each do |item|
+          if item["label"] == text && item["children"].length > 0 
+            result = deep_find_value_with_key(movie,item["id"].to_s)
+            result["children"].each do |a|
+              @confirm_actions = []
+              if a["next_type"] == nil && a["children"].length > 0
+                a["children"].each do |b|
+                  @label = b["label"]
+                  @text = b["label"]
+                  @confirm_actions.push(confirm_actions[0])
+                end
+                @altText = a["label"]
+                @current_id = a["id"]
+                @type = template_type.find {|item| item == "buttons" }
+              end
+            end
+            return reply_template
           end
-        end
-        
-
+        end 
+      end 
     end
-    
   end
   # def reply_template(question)
   #   [
@@ -439,6 +477,10 @@ class WebhookController < ApplicationController
 
   def template_type
     ["carousel","confirm","buttons"]
+  end
+
+  def next_type
+    ["question", "message"]
   end
 end
 
