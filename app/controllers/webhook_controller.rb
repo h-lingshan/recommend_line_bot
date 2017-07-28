@@ -164,7 +164,6 @@ class WebhookController < ApplicationController
             end
             return reply_template
           else
-            binding.pry
             @label = item["label"]
             @text = item["label"]
             @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
