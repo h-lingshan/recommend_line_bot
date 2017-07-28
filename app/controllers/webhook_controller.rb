@@ -81,7 +81,6 @@ class WebhookController < ApplicationController
           reply_template
       end
     elsif text.include?("YES") || text.include?("NO")
-      session[:current_id] ||= "1"
       result = deep_find_value_with_key(movie,event["postback"]["data"])
       if result["children"].length >= 2
         result["children"].each do |item|
