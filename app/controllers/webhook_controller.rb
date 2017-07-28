@@ -148,7 +148,7 @@ class WebhookController < ApplicationController
    
     result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
       if result["children"].length > 0
-         binding.pry
+         #binding.pry
         result["children"].each do |item|
           
           if item["children"].length > 0 
@@ -206,12 +206,6 @@ class WebhookController < ApplicationController
       text: msg
       }
     ]
-  end
-  def reply_text_from_json(question,msg)
-    question["choice"].map{|h| h['finish'] if h['label']==msg}.compact.first
-  end
-  def reply_qid_from_json(question,msg)
-    question["choice"].map{|h| h['ch_id'] if h['label']==msg}.compact.first
   end
   
   def build_template_message(movie)
