@@ -78,11 +78,12 @@ class WebhookController < ApplicationController
           @altText = result["label"]
           @current_id = result["id"]
           @type = template_type.find {|item| item == "confirm" }
-          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
+          #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-    #else
-      #result = deep_find_value_with_key(movie,)
+    end
+   # else
+      #result = deep_find_value_with_key(movie,@current_id)
        
     # if text == "はじめまして" then
     #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
