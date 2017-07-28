@@ -63,7 +63,7 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text = "映画を探す"
+    text = event["message"]["text"]
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,1 , nil)
       if result["next_type"] == "message" && result["children"].length >= 2
