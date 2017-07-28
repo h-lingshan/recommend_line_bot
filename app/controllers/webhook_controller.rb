@@ -144,7 +144,7 @@ class WebhookController < ApplicationController
   end
 
   def execute_post_back(event,movie)
-    result = deep_find_value_with_key(movie,["postback"]["data"].split("&")[0].split("=")[1].to_s, ["postback"]["data"].split("&")[1].split("=")[1].to_i)
+    result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
       if result["children"].length > 0
         result["children"].each do |item|
           if item["children"].length > 0 
