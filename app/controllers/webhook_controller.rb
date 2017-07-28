@@ -49,13 +49,13 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
-        when Line::Bot::Event::MessageType::Postback
-          message = execute_post_back(event,data_hash)    
-          client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
           message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
+      when Line::Bot::Event::Postback
+          message = execute_post_back(event,data_hash)    
+          client.reply_message(event['replyToken'], message)
       end 
     }
     render status: 200, json: { message: 'OK' }
