@@ -20,7 +20,7 @@ class WebhookController < ApplicationController
     
     #build_template execute_near_movietheather("222")
     #render :json => deep_find_value_with_key(data_hash,"3")
-    render :json =>  build_template_message(data_hash)
+    render :json =>  execute("",data_hash)
   end 
 
   def client
@@ -41,7 +41,6 @@ class WebhookController < ApplicationController
     unless client.validate_signature(body, signature)
       error 400 do 'Bad Request' end
     end
-
     events = client.parse_events_from(body)
     events.each { |event|
       case event
@@ -62,28 +61,28 @@ class WebhookController < ApplicationController
   private
   def execute(event,movie)
     text = event.message['text']
-    #text ="映画を探す"
+    #text ="NO"
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1")
-      @current_id = result["id"]
       if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
         result["children"].each do |a|
           #action
           @label = a["label"]
           @text = a["label"]  
+          @post_id = a["id"]
           @confirm_actions.push(confirm_actions[0])
         end
           #template
           @altText = result["label"]
-          @current_id = result["id"]
+          #session[:current_id] = result["id"].to_s
           @type = template_type.find {|item| item == "confirm" }
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-     elsif text.include?("YES") || text.include?("NO")
-      @current_id ||= "1"
-      result = deep_find_value_with_key(movie,@current_id)
+    elsif text.include?("YES") || text.include?("NO")
+      session[:current_id] ||= "1"
+      result = deep_find_value_with_key(movie,session[:current_id].to_s)
       if result["children"].length >= 2
         result["children"].each do |item|
           if item["label"] == text && item["children"].length > 0 
@@ -94,18 +93,25 @@ class WebhookController < ApplicationController
                 a["children"].each do |b|
                   @label = b["label"]
                   @text = b["label"]
+                  @post_id = b["id"]
                   @confirm_actions.push(confirm_actions[0])
                 end
-                @altText = a["label"]
-                @current_id = a["id"]
-                @type = template_type.find {|item| item == "buttons" }
+              @altText = a["label"]
+              @type = template_type.find {|item| item == "buttons" }
               end
             end
+           reply_template
           end 
         end 
-        reply_template
-      end 
-    end
+        
+      end
+    #else
+      #"123"
+    
+     #  session[:current_id] ||= "1"
+     #reply_template
+     #end 
+  end
    # else
       #result = deep_find_value_with_key(movie,@current_id)
        
@@ -264,7 +270,9 @@ class WebhookController < ApplicationController
   def confirm_actions
     [
       {
-        type: "message",
+        
+        type: "postback",
+        data: @post_id,
         label: @label,
         text: @text
       }
