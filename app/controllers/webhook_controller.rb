@@ -24,7 +24,7 @@ class WebhookController < ApplicationController
     temp_a = JSON.parse(temp.to_json)
    # binding.pry
   
-    render :text =>   execute_post_back("",data_hash)
+    render :text =>   build_template("35.669826","139.775168")
   end 
 
   def client
@@ -148,9 +148,7 @@ class WebhookController < ApplicationController
    
     result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
       if result["children"].length > 0
-         #binding.pry
         result["children"].each do |item|
-          
           if item["children"].length > 0 
             result = deep_find_value_with_key(movie,item["id"].to_s, item["parent_id"])
             @altText = result["label"]
@@ -307,102 +305,6 @@ class WebhookController < ApplicationController
     ]
   end
 
-  # def reply_carousel(question)
-  #   [
-  #     {
-  #       type: "template",
-  #       altText: "this is a carousel template",
-  #       template: 
-  #       {
-  #         type: "carousel",
-  #         columns: 
-  #         [
-  #           {
-  #             thumbnailImageUrl: "https://example.com/bot/images/item1.jpg",
-  #             title: "this is menu",
-  #             text: "description",
-  #             actions: 
-  #             [
-  #               {
-  #                 type: "postback",
-  #                 label: "Buy",
-  #                 data: "action=buy&itemid=111"
-  #               },
-  #               {
-  #                 type: "postback",
-  #                 label: "Add to cart",
-  #                 data: "action=add&itemid=111"
-  #               },
-  #               {
-  #                 type: "uri",
-  #                 label: "View detail",
-  #                 uri: "http://example.com/page/111"
-  #               }
-  #             ]
-  #           },
-  #           {
-  #             thumbnailImageUrl: "https://example.com/bot/images/item2.jpg",
-  #             title: "this is menu",
-  #             text: "description",
-  #             actions: 
-  #             [
-  #               {
-  #                 type: "postback",
-  #                 label: "Buy",
-  #                 data: "action=buy&itemid=222"
-  #               },
-  #               {
-  #                 type: "postback",
-  #                 label: "Add to cart",
-  #                 data: "action=add&itemid=222"
-  #               },
-  #               {
-  #                 type: "uri",
-  #                 label: "View detail",
-  #                 uri: "http://example.com/page/222"
-  #               }
-  #             ]
-  #           }
-  #         ]
-  #       }
-  #     }
-  #   ]
-  # end
-  
-  # def replay_button(question)
-  #   [
-  #     {
-  #       type: "template",
-  #       altText: question["label"],
-  #       template: 
-  #       {
-  #         type: "buttons",
-  #         thumbnailImageUrl: "https://example.com/bot/images/image.jpg",
-  #         title: question["body"]["content"],
-  #         text: question["body"]["content"],
-  #         actions:
-  #         [
-  #           {
-  #             type: "message",
-  #             label: question["choice"][0]["label"],
-  #             text: question["choice"][0]["label"]
-  #           },
-  #           {
-  #             type: "message",
-  #             label: question["choice"][1]["label"],
-  #             text: question["choice"][1]["label"]
-  #           },
-  #           {
-  #             type: "message",
-  #             label: question["choice"][2]["label"],
-  #             text: question["choice"][2]["label"]
-  #           }
-  #         ]
-  #       }
-  #     }
-  #   ]
-  # end
-
   def actions
     [
       {
@@ -423,7 +325,7 @@ class WebhookController < ApplicationController
       {
         title: @title,
         text: 'ここから'+@distance.to_s+'km - '+ @address,
-        actions: actions
+        actions: @actions
       }
     ]
   end
@@ -500,14 +402,16 @@ class WebhookController < ApplicationController
 
   def build_template(latitude, longitude)
     data = get_near_movietheather(latitude, longitude)
-    @column = []
+    @columns = []
+    @actions = []
     data.each do | item |  
       @title = item["name"]
       @distance = item["distance"]
       @address = item["address"]
       @googleSearchUrl = item["google_search"]
       @googleMapRouteUrl = item["how_to_go"]
-      @column.push(columns[0])
+      @actions.push(actions[0])
+      @columns.push(columns[0])
     end
     messages   
   end
