@@ -24,7 +24,7 @@ class WebhookController < ApplicationController
     temp_a = JSON.parse(temp.to_json)
    # binding.pry
   
-    render :text =>   build_template("35.669826","139.775168")
+    render :text =>  execute_post_back("",data_hash)
   end 
 
   def client
@@ -149,19 +149,25 @@ class WebhookController < ApplicationController
     result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
       if result["children"].length > 0
         result["children"].each do |item|
+          @confirm_actions = []
+          @altText = item["label"]
+          @type = template_type.find {|item| item == "buttons" }
           if item["children"].length > 0 
             result = deep_find_value_with_key(movie,item["id"].to_s, item["parent_id"])
             @altText = result["label"]
-            @type = template_type.find {|item| item == "buttons" }
-            @confirm_actions = []
             result["children"].each do |a|
               @label = a["label"]
               @text = a["label"]
               @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
               @confirm_actions.push(confirm_actions[0])
             end
-          return reply_template
+          else
+            @label = item["label"]
+            @text = item["label"]
+            @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
+            @confirm_actions.push(confirm_actions[0])
           end 
+          return reply_template
         end 
       else
         return reply_text(result["label"] + result["to_web"])
@@ -252,32 +258,6 @@ class WebhookController < ApplicationController
       end 
     end
   end
-  # def reply_template(question)
-  #   [
-  #     {
-  #       type: "template",
-  #       altText: question["label"],
-  #       template: 
-  #       {
-  #         type: "confirm",
-  #         text: question["body"]["content"],
-  #         actions: 
-  #         [
-  #           {
-  #             type: "message",
-  #             label: question["choice"][0]["label"],
-  #             text: question["choice"][0]["label"]
-  #           },
-  #           {
-  #             type: "message",
-  #             label: question["choice"][1]["label"],
-  #             text: question["choice"][1]["label"]
-  #           }
-  #         ]
-  #       }
-  #     }
-  #   ]
-  # end
 
   def reply_template
     [
