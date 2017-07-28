@@ -49,10 +49,15 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
+        when Line::Bot:;Event::MessageType::Postback
+          message = post_back_message(event,data_hash)    
+          client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
           message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
+      
+
       end 
     }
     render status: 200, json: { message: 'OK' }
@@ -60,8 +65,7 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    #text = event.message['text']
-    text ="映画を探す"
+    text = event.message['text']
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1")
       if result["next_type"] == "message" && result["children"].length >= 2
@@ -75,13 +79,15 @@ class WebhookController < ApplicationController
         end
           #template
           @altText = result["label"]
-          #session[:current_id] = result["id"].to_s
           @type = template_type.find {|item| item == "confirm" }
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-    elsif text.include?("YES") || text.include?("NO")
-      result = deep_find_value_with_key(movie,event["postback"]["data"])
+    end
+  end
+
+  def post_back_message(event, movie)
+    result = deep_find_value_with_key(movie,event["postback"]["data"])
       if result["children"].length >= 2
         result["children"].each do |item|
           if item["label"] == text && item["children"].length > 0 
@@ -102,14 +108,7 @@ class WebhookController < ApplicationController
           return reply_template
           end 
         end 
-        
       end
-    #else
-      #"123"
-    
-     #  session[:current_id] ||= "1"
-     #reply_template
-     #end 
   end
    # else
       #result = deep_find_value_with_key(movie,@current_id)
