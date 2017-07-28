@@ -20,7 +20,7 @@ class WebhookController < ApplicationController
     
     #build_template execute_near_movietheather("222")
     #render :json => deep_find_value_with_key(data_hash,"3")
-    render :json =>  execute_post_back("",data_hash)
+    render :json =>  execute("",data_hash)
   end 
 
   def client
@@ -53,9 +53,6 @@ class WebhookController < ApplicationController
           message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
-      when Line::Bot::Event::Postback
-          message = execute_post_back(event,data_hash)    
-          client.reply_message(event['replyToken'], message)
       end 
     }
     render status: 200, json: { message: 'OK' }
@@ -63,7 +60,7 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text = event["message"]["text"]
+    text = "映画を探す"
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,1 , nil)
       if result["next_type"] == "message" && result["children"].length >= 2
