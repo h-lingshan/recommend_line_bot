@@ -53,6 +53,9 @@ class WebhookController < ApplicationController
           message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
+      when Line::Bot::Event::Postback
+          message = execute_post_back(event,data_hash)    
+          client.reply_message(event['replyToken'], message)
       end 
     }
     render status: 200, json: { message: 'OK' }
@@ -60,9 +63,7 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text = "映画を探す"
-    if text.include?("映画を探す")
-      result = deep_find_value_with_key(movie,1 , nil)
+    result = deep_find_value_with_key(movie,1 , nil)
       if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
         result["children"].each do |a|
@@ -78,31 +79,6 @@ class WebhookController < ApplicationController
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-  end
-   # else
-      #result = deep_find_value_with_key(movie,@current_id)
-       
-    # if text == "はじめまして" then
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["qid"], next_qid: question["choice"][0]["ch_id"])
-    #   #reply_text(movie["context_name"].concat("です"))
-    # elsif text.include?("映画") then 
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["qid"], next_qid: movie["question"]["choice"][0]["ch_id"])
-    #   deep_find_value_with_key(movie,1)
-    #   reply_template(movie["question"])
-    # elsif text.include?("はい") then    
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["choice"][0]["ch_id"], next_qid: "0")
-    #   reply_text(movie["question"]["choice"][0]["finish"]["content"])
-    # elsif text.include?("いいえ") then 
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: movie["question"]["choice"][1]["ch_id"], next_qid: movie["question"]["choice"][1]["question"]["ch_id"])
-    #   replay_button(movie["question"]["choice"][1]["question"])
-    # elsif reply_text_from_json(movie["question"]["choice"][1]["question"],text)!=nil then
-    #   Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: reply_qid_from_json(movie["question"]["choice"][1]["question"],text), next_qid: "0")
-    #   reply_text(reply_text_from_json(movie["question"]["choice"][1]["question"],text)["content"])
-    # else
-    #   reply_text("メッセージありがとうございます")
-    #   #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
-    # end
- 
   end
 
   def execute_post_back(event,movie)
