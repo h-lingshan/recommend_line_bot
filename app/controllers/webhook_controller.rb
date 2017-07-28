@@ -50,14 +50,12 @@ class WebhookController < ApplicationController
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Postback
-          message = post_back_message(event,data_hash)    
+          message = execute_post_back(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
           message = execute_near_movietheather(event)
           client.reply_message(event['replyToken'], message)
         end
-      
-
       end 
     }
     render status: 200, json: { message: 'OK' }
@@ -65,7 +63,7 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text = event.message['text']
+    text =  event.message['text']
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1")
       if result["next_type"] == "message" && result["children"].length >= 2
@@ -83,11 +81,8 @@ class WebhookController < ApplicationController
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-    end
-  end
-
-  def post_back_message(event, movie)
-    result = deep_find_value_with_key(movie,event["postback"]["data"])
+    elsif text.include?("YES") || text.include?("NO")
+      result = deep_find_value_with_key(movie,event)
       if result["children"].length >= 2
         result["children"].each do |item|
           if item["label"] == text && item["children"].length > 0 
@@ -108,7 +103,14 @@ class WebhookController < ApplicationController
           return reply_template
           end 
         end 
+        
       end
+    #else
+      #"123"
+    
+     #  session[:current_id] ||= "1"
+     #reply_template
+     #end 
   end
    # else
       #result = deep_find_value_with_key(movie,@current_id)
@@ -134,6 +136,32 @@ class WebhookController < ApplicationController
     #   #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
     # end
  
+  end
+
+  def execute_post_back(event,movie)
+    result = deep_find_value_with_key(movie,event["postback"]["data"])
+      if result["children"].length >= 2
+        result["children"].each do |item|
+          if item["label"] == text && item["children"].length > 0 
+            result = deep_find_value_with_key(movie,item["id"].to_s)
+            result["children"].each do |a|
+              @confirm_actions = []
+              if a["next_type"] == nil && a["children"].length > 0
+                a["children"].each do |b|
+                  @label = b["label"]
+                  @text = b["label"]
+                  @post_id = b["id"]
+                  @confirm_actions.push(confirm_actions[0])
+                end
+              @altText = a["label"]
+              @type = template_type.find {|item| item == "buttons" }
+              end
+            end
+          return reply_template
+          end 
+        end 
+        
+      end
   end
 
   def execute_near_movietheather(event)
