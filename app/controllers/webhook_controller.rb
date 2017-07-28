@@ -101,9 +101,9 @@ class WebhookController < ApplicationController
                 @type = template_type.find {|item| item == "buttons" }
               end
             end
-            reply_template
-          end
+          end 
         end 
+        reply_template
       end 
     end
    # else
