@@ -144,9 +144,9 @@ class WebhookController < ApplicationController
   end
 
   def execute_post_back(event,movie)
-    #result = deep_find_value_with_key(movie,"47", 4)
+    result = deep_find_value_with_key(movie,"47", 4)
    
-    result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
+    #result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
       if result["children"].length > 0
         @confirm_actions = []
         result["children"].each do |item|
@@ -163,14 +163,16 @@ class WebhookController < ApplicationController
               @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
               @confirm_actions.push(confirm_actions[0])
             end
+            return reply_template
           else
+            binding.pry
             @label = item["label"]
             @text = item["label"]
             @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
             @confirm_actions.push(confirm_actions[0])
           end 
-          return reply_template
         end 
+        return reply_template
       else
         return reply_text(result["label"] + result["to_web"])
       end
