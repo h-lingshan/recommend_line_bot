@@ -20,7 +20,11 @@ class WebhookController < ApplicationController
     
     #build_template execute_near_movietheather("222")
     #render :json => deep_find_value_with_key(data_hash,"3")
-    render :json =>  execute("",data_hash)
+    temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
+    temp_a = JSON.parse(temp.to_json)
+   # binding.pry
+  
+    render :text =>   temp["events"][0]["postback"]["data"].split("&")[1].split("=")[1]
   end 
 
   def client
@@ -140,23 +144,19 @@ class WebhookController < ApplicationController
   end
 
   def execute_post_back(event,movie)
-    result = deep_find_value_with_key(movie,event["postback"]["data"])
-      if result["children"].length >= 2
+    result = deep_find_value_with_key(movie,["postback"]["data"].split("&")[0].split("=")[1].to_s, ["postback"]["data"].split("&")[1].split("=")[1].to_i)
+      if result["children"].length > 0
         result["children"].each do |item|
-          if item["label"] == text && item["children"].length > 0 
-            result = deep_find_value_with_key(movie,item["id"].to_s)
+          if item["children"].length > 0 
+            result = deep_find_value_with_key(movie,item["id"].to_s, item["parent_id"])
+            @altText = result["label"]
+            @type = template_type.find {|item| item == "buttons" }
+            @confirm_actions = []
             result["children"].each do |a|
-              @confirm_actions = []
-              if a["next_type"] == nil && a["children"].length > 0
-                a["children"].each do |b|
-                  @label = b["label"]
-                  @text = b["label"]
-                  @post_id = "id="+ b["id"].to_s+ "&"+ "parent_id="+ b["parent_id"].to_s
-                  @confirm_actions.push(confirm_actions[0])
-                end
-              @altText = a["label"]
-              @type = template_type.find {|item| item == "buttons" }
-              end
+              @label = a["label"]
+              @text = a["label"]
+              @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
+              @confirm_actions.push(confirm_actions[0])
             end
           return reply_template
           end 
@@ -178,9 +178,10 @@ class WebhookController < ApplicationController
         end
       end
       when Hash
-        if data["id"].to_s == desired_key
+        if data["id"].to_s == desired_key && parent_id == nil
           return data
         elsif data["id"].to_s == desired_key && data["parent_id"] == parent_id
+          return data
         else
           data.each do |key, val|
             if found = deep_find_value_with_key(val, desired_key, parent_id)
