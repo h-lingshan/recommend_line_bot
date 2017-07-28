@@ -65,7 +65,7 @@ class WebhookController < ApplicationController
   def execute(event,movie)
     text =  event.message['text']
     if text.include?("映画を探す")
-      result = deep_find_value_with_key(movie,"1")
+      result = deep_find_value_with_key(movie, 1, nil)
       if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
         result["children"].each do |a|
@@ -80,37 +80,8 @@ class WebhookController < ApplicationController
           @type = template_type.find {|item| item == "confirm" }
           #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
-      end
-    elsif text.include?("YES") || text.include?("NO")
-      result = deep_find_value_with_key(movie,event)
-      if result["children"].length >= 2
-        result["children"].each do |item|
-          if item["label"] == text && item["children"].length > 0 
-            result = deep_find_value_with_key(movie,item["id"].to_s)
-            result["children"].each do |a|
-              @confirm_actions = []
-              if a["next_type"] == nil && a["children"].length > 0
-                a["children"].each do |b|
-                  @label = b["label"]
-                  @text = b["label"]
-                  @post_id = b["id"]
-                  @confirm_actions.push(confirm_actions[0])
-                end
-              @altText = a["label"]
-              @type = template_type.find {|item| item == "buttons" }
-              end
-            end
-          return reply_template
-          end 
-        end 
-        
-      end
-    #else
-      #"123"
-    
-     #  session[:current_id] ||= "1"
-     #reply_template
-     #end 
+      end    
+    end
   end
    # else
       #result = deep_find_value_with_key(movie,@current_id)
@@ -169,20 +140,22 @@ class WebhookController < ApplicationController
   end
   
   
-  def deep_find_value_with_key(data, desired_key)
+  def deep_find_value_with_key(data, desired_key, parent_id)
     case data
       when Array
         data.each do |value|
-        if found = deep_find_value_with_key(value, desired_key)
+        if found = deep_find_value_with_key(value, desired_key, parent_id)
           return found
         end
       end
       when Hash
-        if data["id"].to_s == desired_key
+        if data["id"] == 0 && parent_id == nil
+          return data
+        if data["id"] == desired_key && data["parent_id"] == parent_id
           return data
         else
           data.each do |key, val|
-            if found = deep_find_value_with_key(val, desired_key)
+            if found = deep_find_value_with_key(val, desired_key, parent_id)
               return found
             end
           end
