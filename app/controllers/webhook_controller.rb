@@ -60,8 +60,8 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text = event.message['text']
-    #text ="NO"
+    #text = event.message['text']
+    text ="映画を探す"
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1")
       if result["next_type"] == "message" && result["children"].length >= 2
@@ -100,7 +100,7 @@ class WebhookController < ApplicationController
               @type = template_type.find {|item| item == "buttons" }
               end
             end
-           reply_template
+          return reply_template
           end 
         end 
         
@@ -273,8 +273,8 @@ class WebhookController < ApplicationController
         
         type: "postback",
         data: @post_id,
-        label: @label,
-        text: @text
+        label: @label
+        #text: @text
       }
     ]
   end
