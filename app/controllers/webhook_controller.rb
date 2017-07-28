@@ -63,9 +63,10 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text =  event.message['text']
+    #text =  event.message['text']
+    text = "映画を探す"
     if text.include?("映画を探す")
-      result = deep_find_value_with_key(movie,"1")
+      result = deep_find_value_with_key(movie,"1", nil)
       if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
         result["children"].each do |a|
@@ -168,20 +169,21 @@ class WebhookController < ApplicationController
   end
   
   
-  def deep_find_value_with_key(data, desired_key)
+  def deep_find_value_with_key(data, desired_key, parent_id)
     case data
       when Array
         data.each do |value|
-        if found = deep_find_value_with_key(value, desired_key)
+        if found = deep_find_value_with_key(value, desired_key, parent_id)
           return found
         end
       end
       when Hash
         if data["id"].to_s == desired_key
           return data
+        elsif data["id"].to_s == desired_key && data["parent_id"] == parent_id
         else
           data.each do |key, val|
-            if found = deep_find_value_with_key(val, desired_key)
+            if found = deep_find_value_with_key(val, desired_key, parent_id)
               return found
             end
           end
