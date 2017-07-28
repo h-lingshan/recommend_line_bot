@@ -24,7 +24,7 @@ class WebhookController < ApplicationController
     temp_a = JSON.parse(temp.to_json)
    # binding.pry
   
-    render :text =>   temp["events"][0]["postback"]["data"].split("&")[1].split("=")[1]
+    render :text =>   execute_post_back("",data_hash)
   end 
 
   def client
@@ -144,6 +144,8 @@ class WebhookController < ApplicationController
   end
 
   def execute_post_back(event,movie)
+    #result = deep_find_value_with_key(movie,"64", 62)
+    #binding.pry
     result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
       if result["children"].length > 0
         result["children"].each do |item|
@@ -161,6 +163,8 @@ class WebhookController < ApplicationController
           return reply_template
           end 
         end 
+      else
+        return reply_text(result["to_web"])
       end
   end
 
