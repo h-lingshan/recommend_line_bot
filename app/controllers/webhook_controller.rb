@@ -49,7 +49,7 @@ class WebhookController < ApplicationController
         when Line::Bot::Event::MessageType::Text
           message = execute(event,data_hash)    
           client.reply_message(event['replyToken'], message)
-        when Line::Bot:;Event::MessageType::Postback
+        when Line::Bot::Event::MessageType::Postback
           message = post_back_message(event,data_hash)    
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Location
