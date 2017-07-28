@@ -63,8 +63,8 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    #text =  event.message['text']
-    text = "映画を探す"
+    text =  event.message['text']
+    #text = "映画を探す"
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1", nil)
       if result["next_type"] == "message" && result["children"].length >= 2
@@ -73,7 +73,7 @@ class WebhookController < ApplicationController
           #action
           @label = a["label"]
           @text = a["label"]  
-          @post_id = a["id"]
+          @post_id = "id="+ a["id"]+ "&"+ "parent_id"+ a["parent_id"] 
           @confirm_actions.push(confirm_actions[0])
         end
           #template
@@ -94,7 +94,7 @@ class WebhookController < ApplicationController
                 a["children"].each do |b|
                   @label = b["label"]
                   @text = b["label"]
-                  @post_id = b["id"]
+                  @post_id = "id="+ b["id"]+ "&"+ "parent_id"+ b["parent_id"] 
                   @confirm_actions.push(confirm_actions[0])
                 end
               @altText = a["label"]
@@ -151,7 +151,7 @@ class WebhookController < ApplicationController
                 a["children"].each do |b|
                   @label = b["label"]
                   @text = b["label"]
-                  @post_id = b["id"]
+                  @post_id = "id="+ a["id"]+ "&"+ "parent_id"+ a["parent_id"] 
                   @confirm_actions.push(confirm_actions[0])
                 end
               @altText = a["label"]
