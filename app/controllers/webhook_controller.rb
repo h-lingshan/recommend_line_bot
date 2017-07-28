@@ -82,7 +82,7 @@ class WebhookController < ApplicationController
       end
     elsif text.include?("YES") || text.include?("NO")
       session[:current_id] ||= "1"
-      result = deep_find_value_with_key(movie,session[:current_id].to_s)
+      result = deep_find_value_with_key(movie,event["postback"]["data"])
       if result["children"].length >= 2
         result["children"].each do |item|
           if item["label"] == text && item["children"].length > 0 
