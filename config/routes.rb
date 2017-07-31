@@ -59,6 +59,7 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  root 'webhook#get_sample'
   post '/callback' => 'webhook#callback'
   get '/' => 'webhook#get_sample'
   resources :fileuploads, only: [:index, :create, :new]
