@@ -24,7 +24,7 @@ class WebhookController < ApplicationController
     temp_a = JSON.parse(temp.to_json)
    # binding.pry
   
-    render :text =>  execute_post_back("",data_hash)
+    render :json =>  build_template("35.672618","139.799774")
   end 
 
   def client
@@ -254,7 +254,7 @@ class WebhookController < ApplicationController
       {
         title: @title,
         text: 'ここから'+@distance.to_s+'km - '+ @address,
-        actions: @actions
+        actions: actions
       }
     ]
   end
@@ -332,14 +332,12 @@ class WebhookController < ApplicationController
   def build_template(latitude, longitude)
     data = get_near_movietheather(latitude, longitude)
     @columns = []
-    @actions = []
     data.each do | item |  
       @title = item["name"]
       @distance = item["distance"]
       @address = item["address"]
       @googleSearchUrl = item["google_search"]
       @googleMapRouteUrl = item["how_to_go"]
-      @actions.push(actions[0])
       @columns.push(columns[0])
     end
     messages   
