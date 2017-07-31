@@ -36,8 +36,9 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
-    data_hash = JSON.parse(file[0])
+    #file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
+    file = File.read("db/converted_file.json")
+    data_hash = JSON.parse(file)
 
     body = request.body.read
 
