@@ -7,7 +7,7 @@ class WebhookController < ApplicationController
  
 
   def get_sample
-    file = File.read(Dir.glob(Rails.root.join('public', 'converted_file','*.json'))[0])
+    file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
    
     data_hash = JSON.parse(file)
     #binding.pry
@@ -36,7 +36,7 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    file = File.read(Dir.glob(Rails.root.join('public', 'converted_file','*.json'))[0])
+    file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
     data_hash = JSON.parse(file[0])
 
     body = request.body.read
