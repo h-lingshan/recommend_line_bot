@@ -58,8 +58,5 @@ Rails.application.routes.draw do
   root 'webhook#get_sample'
   post '/callback' => 'webhook#callback'
   get '/' => 'webhook#get_sample'
-  get '/index' => 'fileuploads#index'
-  get '/new' => 'fileuploads#new'
-  post '/create' => 'fileuploads#create'
- # resources :fileuploads, only: [:index, :create, :new]
+  resources :fileuploads, only: [:index, :create, :new]
 end
