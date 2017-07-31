@@ -7,7 +7,8 @@ class WebhookController < ApplicationController
  
 
   def get_sample
-    file = File.read("public/converted_file/converted_file.json")
+    file = File.read(Dir.glob(Rails.root.join('public', 'converted_file','*.json'))[0])
+   
     data_hash = JSON.parse(file)
     #binding.pry
     #result=deep_find_value_with_key(data_hash,"1")
@@ -35,8 +36,8 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    file = File.read("public/converted_file/converted_file.json")
-    data_hash = JSON.parse(file)
+    file = File.read(Dir.glob(Rails.root.join('public', 'converted_file','*.json'))[0])
+    data_hash = JSON.parse(file[0])
 
     body = request.body.read
 
