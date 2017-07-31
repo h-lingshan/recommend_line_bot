@@ -1,0 +1,4 @@
+<h1><%= link_to 'Append jpg', new_fileupload_url %></h1>
+  <% @img_paths.each do |img_path| %>
+    <img src="https://cre8cre8.com/<%= img_path %>">
+  <% end %>

@@ -1,0 +1,6 @@
+
+  <%= form_tag '/fileuploads', method: 'post', multipart: true do %>
+  <label>ファイル</label>
+	  <%= file_field :fileupload, :file %>
+	  <%= submit_tag 'Send file' %>
+<% end %>
