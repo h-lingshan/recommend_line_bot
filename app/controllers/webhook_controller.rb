@@ -7,7 +7,7 @@ class WebhookController < ApplicationController
  
 
   def get_sample
-    file = File.read("db/sample.json")
+    file = File.read("public/converted_file/converted_file.json")
     data_hash = JSON.parse(file)
     #binding.pry
     #result=deep_find_value_with_key(data_hash,"1")
@@ -24,7 +24,7 @@ class WebhookController < ApplicationController
     temp_a = JSON.parse(temp.to_json)
    # binding.pry
   
-    render :json =>  build_template("35.672618","139.799774")
+    render :json =>  data_hash
   end 
 
   def client
@@ -35,7 +35,7 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    file = File.read("db/sample.json")
+    file = File.read("public/converted_file/converted_file.json")
     data_hash = JSON.parse(file)
 
     body = request.body.read
@@ -68,7 +68,6 @@ class WebhookController < ApplicationController
   private
   def execute(event,movie)
     text =  event.message['text']
-    #text = "映画を探す"
     if text.include?("映画を探す")
       result = deep_find_value_with_key(movie,"1", nil)
       if result["next_type"] == "message" && result["children"].length >= 2
@@ -83,11 +82,11 @@ class WebhookController < ApplicationController
           #template
           @altText = result["label"]
           @type = template_type.find {|item| item == "confirm" }
-          #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
+          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
     else
-      #Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "0", next_qid: "0")
+      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "", next_qid: "")
       reply_text("メッセージありがとうございます")
     end  
   end
@@ -111,6 +110,7 @@ class WebhookController < ApplicationController
               @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
               @confirm_actions.push(confirm_actions[0])
             end
+            
             return reply_template
           else
             @label = item["label"]
@@ -162,52 +162,6 @@ class WebhookController < ApplicationController
       }
     ]
   end
-  
-  def build_template_message(movie)
-    text = event.message['text']
-    if text.include?("映画を探す")
-      result = deep_find_value_with_key(movie,"1")
-      @current_id = result["id"]
-      if result["next_type"] == "message" && result["children"].length >= 2
-        @confirm_actions = []
-        result["children"].each do |a|
-          #action
-          @label = a["label"]
-          @text = a["label"]  
-          @confirm_actions.push(confirm_actions[0])
-        end
-          #template
-          @altText = result["label"]
-          @current_id = result["id"]
-          @type = template_type.find {|item| item == "confirm" }
-          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
-          reply_template
-      end
-    elsif text.include?("YES") || text.include?("NO")
-      result = deep_find_value_with_key(movie,"1")
-      if result["children"].length >= 2
-        result["children"].each do |item|
-          if item["label"] == text && item["children"].length > 0 
-            result = deep_find_value_with_key(movie,item["id"].to_s)
-            result["children"].each do |a|
-              @confirm_actions = []
-              if a["next_type"] == nil && a["children"].length > 0
-                a["children"].each do |b|
-                  @label = b["label"]
-                  @text = b["label"]
-                  @confirm_actions.push(confirm_actions[0])
-                end
-                @altText = a["label"]
-                @current_id = a["id"]
-                @type = template_type.find {|item| item == "buttons" }
-              end
-            end
-            return reply_template
-          end
-        end 
-      end 
-    end
-  end
 
   def reply_template
     [
@@ -223,10 +177,10 @@ class WebhookController < ApplicationController
       }
     ]
   end
+
   def confirm_actions
     [
-      {
-        
+      {   
         type: "postback",
         data: @post_id,
         label: @label
