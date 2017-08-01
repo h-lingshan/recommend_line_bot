@@ -120,8 +120,8 @@ class WebhookController < ApplicationController
             @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
             @confirm_actions.push(confirm_actions[0])
           end 
+          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: item["id"], current_qid: item["id"], next_qid: "")
         end 
-        Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: item["id"], current_qid: item["id"], next_qid: "")
         return reply_template
       else
         Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: result["id"], current_qid: result["id"], next_qid: "")
