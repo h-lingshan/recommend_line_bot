@@ -1,6 +1,8 @@
 
+  <div class="line-it-button" data-lang="en" data-type="friend" data-lineid="svu1494w" data-count="true" data-home="true" style="display: none;"></div>
+ <script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
   <%= form_tag '/fileuploads', method: 'post', multipart: true do %>
   <label>ファイル</label>
-	  <%= file_field :fileupload, :file %>
+	  <%= file_field :fileupload, :file,  class: 'js-csv-upload'%>
 	  <%= submit_tag 'Send file' %>
 <% end %>

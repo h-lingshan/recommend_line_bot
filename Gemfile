@@ -39,7 +39,7 @@ gem "gmaps4rails"
 gem 'mysql2', '>= 0.3.13', '< 0.5'
 gem 'google-api-client'
 gem 'roo'
-gem 'aws-sdk'
+gem 'bundler', '>= 1.8.4'
 group :development, :test do
   gem 'sqlite3'
 end
@@ -81,4 +81,9 @@ group :test do
   gem 'fakeweb'
   gem 'addressable'
 end
+
+source 'https://rails-assets.org' do
+  gem 'rails-assets-bootstrap-fileinput', '~> 2.5.0'
+end
+
 

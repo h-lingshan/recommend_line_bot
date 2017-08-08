@@ -8,23 +8,13 @@ class WebhookController < ApplicationController
 
   def get_sample
     #file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
-   file = File.read("db/converted_file.json")
-    data_hash = JSON.parse(file)
-    #binding.pry
+    file = File.read("db/temp.json")
+    data_hash = JSON.parse(file) 
     #result=deep_find_value_with_key(data_hash,"1")
-    # binding.pry
     #build_template_message(data_hash,"1","123")
-   
-    #render :text => deep_find_value_with_key(data_hash,"3")
-    #binding.pry
-    #messages
-    
-    #build_template execute_near_movietheather("222")
     render :json => data_hash
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
-    #temp_a = JSON.parse(temp.to_json)
-   # binding.pry
-  
+    #temp_a = JSON.parse(temp.to_json)  
     #render :text =>  "test ok"
   end 
 
