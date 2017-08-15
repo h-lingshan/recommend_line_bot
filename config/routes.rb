@@ -55,7 +55,7 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
-  root 'webhook#get_sample'
+  root 'fileuploads#new'
   post '/callback' => 'webhook#callback'
   mount Facebook::Messenger::Server, at: "bot"
   get '/' => 'webhook#get_sample'
