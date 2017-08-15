@@ -40,6 +40,7 @@ gem 'mysql2', '>= 0.3.13', '< 0.5'
 gem 'google-api-client'
 gem 'roo'
 gem 'bundler', '>= 1.8.4'
+gem 'facebook-messenger'
 group :development, :test do
   gem 'sqlite3'
 end
