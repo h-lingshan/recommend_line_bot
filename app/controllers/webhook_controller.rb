@@ -15,7 +15,7 @@ class WebhookController < ApplicationController
     #render :json => data_hash
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
     #temp_a = JSON.parse(temp.to_json)  
-    render :text =>  execute_post_back("",data_hash)
+    render :text =>  execute("",data_hash)
   end 
 
   def client
@@ -58,15 +58,15 @@ class WebhookController < ApplicationController
 
   private
   def execute(event,movie)
-    text =  event.message['text']
-    if text.include?("映画を探す")
-      
+    text = event.message['text'] 
+    Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "", next_qid: "")
+    if text.include?("映画を探す")  
       movie.extend(Hashie::Extensions::DeepLocate)
       movie = movie.deep_locate -> (key, value, object) { key == "id" && value == 1 }
       result = movie
-      if result["next_type"] == "message" && result["children"].length >= 2
+      if result[0].key?("children")
         @confirm_actions = []
-        result["children"].each do |a|
+        result[0]["children"].each do |a|
           #action
           @label = a["label"]
           @text = a["label"]  
@@ -74,13 +74,11 @@ class WebhookController < ApplicationController
           @confirm_actions.push(confirm_actions[0])
         end
           #template
-          @altText = result["label"]
+          @altText = result[0]["label"]
           @type = template_type.find {|item| item == "confirm" }
-          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: result["id"], next_qid: "")
           reply_template
       end
-    else
-      Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "", next_qid: "")
+    else  
       reply_text("メッセージありがとうございます")
     end  
   end
