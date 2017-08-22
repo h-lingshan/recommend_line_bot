@@ -15,7 +15,7 @@ class WebhookController < ApplicationController
     #render :json => data_hash
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
     #temp_a = JSON.parse(temp.to_json)  
-    render :text =>  execute("",data_hash)
+    render :text =>  execute_post_back("",data_hash)
   end 
 
   def client
@@ -94,8 +94,9 @@ class WebhookController < ApplicationController
         result[0]["children"].each do |item|
           @altText = item["label"]
           @type = template_type.find {|item| item == "buttons" }
-          if item["children"].length > 0 
-            result = deep_find_value_with_key(movie,item["id"].to_s, item["parent_id"])
+          if item.key?("children")
+            result = deep_find_value_with_key(movie,item["id"], item["parent_id"].to_s)
+            
             @altText = result[0]["label"]
             @confirm_actions = []
             result[0]["children"].each do |a|
@@ -114,7 +115,7 @@ class WebhookController < ApplicationController
         end 
         return reply_template
       else
-        return reply_text(result[0]["label"] + result[0]["to_web"])
+        return reply_text(result[0]["label"]+ "," + result[0]["to_web"])
       end
   end
 

@@ -376,7 +376,7 @@
                 "id": 47,
                 "label": "子供",
                 "next_type": "question",
-                "parent_id": 4,
+                "parent_id": "4",
                 "to_web": null,
                 "children": [
                   {
@@ -420,7 +420,7 @@
                     "id": 53,
                     "label": "人気があるやつ？",
                     "next_type": null,
-                    "parent_id": 52,
+                    "parent_id": "52",
                     "to_web": null,
                     "children": [
                       {
