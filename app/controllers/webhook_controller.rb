@@ -60,7 +60,10 @@ class WebhookController < ApplicationController
   def execute(event,movie)
     text =  event.message['text']
     if text.include?("映画を探す")
-      result = deep_find_value_with_key(movie,"1", nil)
+      
+      movie.extend(Hashie::Extensions::DeepLocate)
+      movie = movie.deep_locate -> (key, value, object) { key == "id" && value == id }
+      result = movie
       if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
         result["children"].each do |a|
@@ -86,13 +89,8 @@ class WebhookController < ApplicationController
     id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
     parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id, current_qid: id, next_qid: parent_id) 
-    
-    movie.extend(Hashie::Extensions::DeepLocate)
-    movie = movie.deep_locate -> (key, value, object) { key == "id" && value == id }
-    movie.extend(Hashie::Extensions::DeepLocate)
-    movie = movie.deep_locate -> (key, value, object) { key == "parent_id" && value == parent_id }
-    result = movie
-    
+   
+    result = deep_find_value_with_key(movie,id,parent_id)
       if result[0].key?("children")
         @confirm_actions = []
         result[0]["children"].each do |item|
@@ -126,6 +124,13 @@ class WebhookController < ApplicationController
     build_template(event['message']['latitude'].to_s,event['message']['longitude'].to_s)
   end
   
+  def deep_find_value_with_key(movie,id,parent_id)
+    movie.extend(Hashie::Extensions::DeepLocate)
+    movie = movie.deep_locate -> (key, value, object) { key == "id" && value == id }
+    movie.extend(Hashie::Extensions::DeepLocate)
+    movie = movie.deep_locate -> (key, value, object) { key == "parent_id" && value == parent_id }
+    movie
+  end
 
   def reply_text(msg)
     [
