@@ -85,7 +85,7 @@ class WebhookController < ApplicationController
   def execute_post_back(event,movie)
     id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
     parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
-    Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id current_qid: id, next_qid: parent_id) 
+    Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id, current_qid: id, next_qid: parent_id) 
     
     movie.extend(Hashie::Extensions::DeepLocate)
     movie = movie.deep_locate -> (key, value, object) { key == "id" && value == id }
