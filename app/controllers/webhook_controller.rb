@@ -96,9 +96,9 @@ class WebhookController < ApplicationController
           @type = template_type.find {|item| item == "buttons" }
           if item["children"].length > 0 
             result = deep_find_value_with_key(movie,item["id"].to_s, item["parent_id"])
-            @altText = result["label"]
+            @altText = result[0]["label"]
             @confirm_actions = []
-            result["children"].each do |a|
+            result[0]["children"].each do |a|
               @label = a["label"]
               @text = a["label"]
               @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
