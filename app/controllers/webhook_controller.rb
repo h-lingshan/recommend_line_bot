@@ -62,7 +62,7 @@ class WebhookController < ApplicationController
     if text.include?("映画を探す")
       
       movie.extend(Hashie::Extensions::DeepLocate)
-      movie = movie.deep_locate -> (key, value, object) { key == "id" && value == id }
+      movie = movie.deep_locate -> (key, value, object) { key == "id" && value == 1 }
       result = movie
       if result["next_type"] == "message" && result["children"].length >= 2
         @confirm_actions = []
