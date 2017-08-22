@@ -7,15 +7,15 @@ class WebhookController < ApplicationController
  
 
   def get_sample
-    #file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
-    file = File.read("db/temp.json")
+   
+    file = File.read("db/converted_file.json")
     data_hash = JSON.parse(file) 
     #result=deep_find_value_with_key(data_hash,"1")
     #build_template_message(data_hash,"1","123")
-    render :json => data_hash
+    #render :json => data_hash
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
     #temp_a = JSON.parse(temp.to_json)  
-    #render :text =>  "test ok"
+    render :text =>  execute_post_back("",data_hash)
   end 
 
   def client
@@ -26,7 +26,6 @@ class WebhookController < ApplicationController
   end
 
   def callback
-    #file = File.read(Dir.glob(Rails.root.join('tmp','*.json'))[0])
     file = File.read("db/converted_file.json")
     data_hash = JSON.parse(file)
 
@@ -84,12 +83,19 @@ class WebhookController < ApplicationController
   end
 
   def execute_post_back(event,movie)
-    #result = deep_find_value_with_key(movie,"47", 4)
-    result = deep_find_value_with_key(movie,event["postback"]["data"].split("&")[0].split("=")[1].to_s, event["postback"]["data"].split("&")[1].split("=")[1].to_i)
-      if result["children"].length > 0
+    id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
+    parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
+    Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id current_qid: id, next_qid: parent_id) 
+    
+    movie.extend(Hashie::Extensions::DeepLocate)
+    movie = movie.deep_locate -> (key, value, object) { key == "id" && value == id }
+    movie.extend(Hashie::Extensions::DeepLocate)
+    movie = movie.deep_locate -> (key, value, object) { key == "parent_id" && value == parent_id }
+    result = movie
+    
+      if result[0].key?("children")
         @confirm_actions = []
-        result["children"].each do |item|
-         
+        result[0]["children"].each do |item|
           @altText = item["label"]
           @type = template_type.find {|item| item == "buttons" }
           if item["children"].length > 0 
@@ -101,8 +107,7 @@ class WebhookController < ApplicationController
               @text = a["label"]
               @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
               @confirm_actions.push(confirm_actions[0])
-            end
-            Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: item["id"], current_qid: item["id"], next_qid: "")
+            end   
             return reply_template
           else
             @label = item["label"]
@@ -110,12 +115,10 @@ class WebhookController < ApplicationController
             @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
             @confirm_actions.push(confirm_actions[0])
           end 
-          Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: item["id"], current_qid: item["id"], next_qid: "")
         end 
         return reply_template
       else
-        Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: result["id"], current_qid: result["id"], next_qid: "")
-        return reply_text(result["label"] + result["to_web"])
+        return reply_text(result[0]["label"] + result[0]["to_web"])
       end
   end
 
@@ -123,30 +126,6 @@ class WebhookController < ApplicationController
     build_template(event['message']['latitude'].to_s,event['message']['longitude'].to_s)
   end
   
-  
-  def deep_find_value_with_key(data, desired_key, parent_id)
-    case data
-      when Array
-        data.each do |value|
-        if found = deep_find_value_with_key(value, desired_key, parent_id)
-          return found
-        end
-      end
-      when Hash
-        if data["id"].to_s == desired_key && parent_id == nil
-          return data
-        elsif data["id"].to_s == desired_key && data["parent_id"] == parent_id
-          return data
-        else
-          data.each do |key, val|
-            if found = deep_find_value_with_key(val, desired_key, parent_id)
-              return found
-            end
-          end
-        end
-      end
-    return nil
-  end
 
   def reply_text(msg)
     [

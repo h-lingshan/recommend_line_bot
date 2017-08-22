@@ -41,6 +41,7 @@ gem 'google-api-client'
 gem 'roo'
 gem 'bundler', '>= 1.8.4'
 gem 'facebook-messenger'
+gem 'hashie'
 group :development, :test do
   gem 'sqlite3'
 end

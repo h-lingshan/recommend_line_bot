@@ -58,6 +58,6 @@ Rails.application.routes.draw do
   root 'fileuploads#new'
   post '/callback' => 'webhook#callback'
   mount Facebook::Messenger::Server, at: "bot"
-  get '/' => 'webhook#get_sample'
+  get '/get_sample' => 'webhook#get_sample'
   resources :fileuploads, only: [:index, :create, :new]
 end

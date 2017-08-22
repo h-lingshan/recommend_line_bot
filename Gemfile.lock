@@ -100,6 +100,7 @@ GEM
       os (~> 0.9)
       signet (~> 0.7)
     hashdiff (0.3.4)
+    hashie (3.5.6)
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
     httpclient (2.8.3)
@@ -304,6 +305,7 @@ DEPENDENCIES
   geocoder
   gmaps4rails
   google-api-client
+  hashie
   jbuilder (~> 2.0)
   jquery-rails
   line-bot-api
@@ -335,4 +337,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.15.3
+   1.15.4
