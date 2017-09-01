@@ -15,6 +15,7 @@ class WebhookController < ApplicationController
     #render :json => data_hash
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
     #temp_a = JSON.parse(temp.to_json)  
+    send_google_analytics("123")
     render :text =>  execute_post_back("",data_hash)
   end 
 
@@ -290,7 +291,7 @@ class WebhookController < ApplicationController
       builder.response :logger
       builder.adapter  :net_http
     end
-    response = conn.post do |req|  # GET http://example.com/api/nyan.json?color=white&size=big
+    response = conn.post do |req|  # post http://example.com/api/nyan.json?color=white&size=big
       req.url 'collect?'
       req.body = {
         :v => '1',
