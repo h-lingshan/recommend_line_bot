@@ -60,6 +60,8 @@ class WebhookController < ApplicationController
   def execute(event,movie)
     text = event.message['text'] 
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "", next_qid: "")
+    send_google_analytics(text)
+    
     if text.include?("映画を探す")  
       movie.extend(Hashie::Extensions::DeepLocate)
       movie = movie.deep_locate -> (key, value, object) { key == "id" && value == 1 }
@@ -70,7 +72,7 @@ class WebhookController < ApplicationController
           #action
           @label = a["label"]
           @text = a["label"]  
-          @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s+"&"+"v=1&tid=UA-91261614-2&cid=555&t=event"
+          @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
           @confirm_actions.push(confirm_actions[0])
         end
           #template
@@ -87,7 +89,7 @@ class WebhookController < ApplicationController
     id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
     parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id, current_qid: id, next_qid: parent_id) 
-   
+    send_google_analytics(id)
     result = deep_find_value_with_key(movie,id,parent_id)
       if result[0].key?("children")
         @confirm_actions = []
@@ -102,14 +104,14 @@ class WebhookController < ApplicationController
             result[0]["children"].each do |a|
               @label = a["label"]
               @text = a["label"]
-              @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s+"&"+"v=1&tid=UA-91261614-2&cid=555&t=event"
+              @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
               @confirm_actions.push(confirm_actions[0])
             end   
             return reply_template
           else
             @label = item["label"]
             @text = item["label"]
-            @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s+"&"+"v=1&tid=UA-91261614-2&cid=555&t=event"
+            @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
             @confirm_actions.push(confirm_actions[0])
           end 
         end 
@@ -280,6 +282,10 @@ class WebhookController < ApplicationController
 
   def next_type
     ["question", "message"]
+  end
+
+  def send_google_analytics(click_text)
+    response = Faraday.get 'https://www.google-analytics.com/collect?v=1&t=pageview&tid=UA-91261614-2&cid=262b33e7-e442-466b-ac7e-a5ba79785bf6&dp=/click_id/'+click_text
   end
 end
 
