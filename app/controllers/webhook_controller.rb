@@ -90,7 +90,7 @@ class WebhookController < ApplicationController
     id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
     parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id, current_qid: id, next_qid: parent_id) 
-    send_google_analytics(id.to_s)
+    send_google_analytics(event["postback"]["data"])
     result = deep_find_value_with_key(movie,id,parent_id)
       if result[0].key?("children")
         @confirm_actions = []
