@@ -60,7 +60,7 @@ class WebhookController < ApplicationController
   def execute(event,movie)
     text = event.message['text'] 
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: text, current_qid: "", next_qid: "")
-    send_google_analytics(text)
+    #send_google_analytics(text)
     
     if text.include?("映画を探す")  
       movie.extend(Hashie::Extensions::DeepLocate)
@@ -89,7 +89,7 @@ class WebhookController < ApplicationController
     id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
     parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id, current_qid: id, next_qid: parent_id) 
-    send_google_analytics(id)
+    #send_google_analytics(id)
     result = deep_find_value_with_key(movie,id,parent_id)
       if result[0].key?("children")
         @confirm_actions = []
