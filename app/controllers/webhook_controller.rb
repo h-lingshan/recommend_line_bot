@@ -290,13 +290,15 @@ class WebhookController < ApplicationController
       builder.response :logger
       builder.adapter  :net_http
     end
-    response = conn.get do |req|  # GET http://example.com/api/nyan.json?color=white&size=big
+    response = conn.post do |req|  # GET http://example.com/api/nyan.json?color=white&size=big
       req.url 'collect?'
-      req.params[:v] = '1'
-      req.params[:tid] = 'pageview'
-      req.params[:tid] = 'UA-91261614-2'
-      req.params[:cid] = '262b33e7-e442-466b-ac7e-a5ba79785bf6'
-      req.params[:dp] = '/click_id/'.concat(click_text)
+      req.body = {
+        :v => '1',
+        :t => 'pageview',
+        :tid => 'UA-91261614-2',
+        :cid => '262b33e7-e442-466b-ac7e-a5ba79785bf6'
+        :dp => '/click_id/'.concat(click_text)
+      } 
     end
   end
 end
