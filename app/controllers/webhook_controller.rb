@@ -15,7 +15,7 @@ class WebhookController < ApplicationController
     #render :json => data_hash
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
     #temp_a = JSON.parse(temp.to_json)  
-    send_google_analytics("123")
+    send_google_analytics(123)
     render :text =>  "123"
   end 
 
@@ -90,7 +90,7 @@ class WebhookController < ApplicationController
     id = event["postback"]["data"].split("&")[0].split("=")[1].to_i
     parent_id = event["postback"]["data"].split("&")[1].split("=")[1].to_s
     Log.create(user_name: event['source']['userId'], type: event['source']['type'], content: id, current_qid: id, next_qid: parent_id) 
-    send_google_analytics(id)
+    send_google_analytics(123)
     result = deep_find_value_with_key(movie,id,parent_id)
       if result[0].key?("children")
         @confirm_actions = []
