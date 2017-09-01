@@ -70,7 +70,7 @@ class WebhookController < ApplicationController
           #action
           @label = a["label"]
           @text = a["label"]  
-          @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
+          @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s+"&"+"v=1&tid=UA-91261614-2&cid=555&t=event"
           @confirm_actions.push(confirm_actions[0])
         end
           #template
@@ -102,14 +102,14 @@ class WebhookController < ApplicationController
             result[0]["children"].each do |a|
               @label = a["label"]
               @text = a["label"]
-              @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s
+              @post_id = "id="+ a["id"].to_s+ "&"+ "parent_id="+ a["parent_id"].to_s+"&"+"v=1&tid=UA-91261614-2&cid=555&t=event"
               @confirm_actions.push(confirm_actions[0])
             end   
             return reply_template
           else
             @label = item["label"]
             @text = item["label"]
-            @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s
+            @post_id = "id="+ item["id"].to_s+ "&"+ "parent_id="+ item["parent_id"].to_s+"&"+"v=1&tid=UA-91261614-2&cid=555&t=event"
             @confirm_actions.push(confirm_actions[0])
           end 
         end 
