@@ -16,7 +16,7 @@ class WebhookController < ApplicationController
     #temp = {"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}], "webhook"=>{"events"=>[{"type"=>"postback", "replyToken"=>"e84d6e6c8b7e4abfadda336d4d5f57de", "source"=>{"userId"=>"Ubcd2b753b73e467880b4ab3f47f35d13", "type"=>"user"}, "timestamp"=>1501232128077, "postback"=>{"data"=>"id=3&parent_id=1"}}]}}
     #temp_a = JSON.parse(temp.to_json)  
     send_google_analytics("123")
-    render :text =>  execute_post_back("",data_hash)
+    render :text =>  "123"
   end 
 
   def client
