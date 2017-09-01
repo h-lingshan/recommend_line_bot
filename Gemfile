@@ -42,6 +42,7 @@ gem 'roo'
 gem 'bundler', '>= 1.8.4'
 gem 'facebook-messenger'
 gem 'hashie'
+gem 'google-analytics-rails'
 group :development, :test do
   gem 'sqlite3'
 end
